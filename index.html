@@ -1,0 +1,3867 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Agenda Espiritual — Vivi de Mulambo</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:wght@300;400&family=Cinzel:wght@400;600&display=swap" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+
+:root {
+  --bg: #0d0a12;
+  --surface: #15101f;
+  --surface2: #1e1630;
+  --border: rgba(160,120,220,0.15);
+  --border-hover: rgba(160,120,220,0.35);
+  --gold: #c9a84c;
+  --gold-light: #e8d080;
+  --purple: #9b6fd4;
+  --purple-light: #c49ef0;
+  --crimson: #c0404a;
+  --sage: #5a9e7a;
+  --text: #e8e0f0;
+  --text-muted: #8878a8;
+  --text-dim: #5a4e78;
+  --font-base: 18px;
+}
+
+body {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  font-size: var(--font-base);
+}
+
+.app { display: flex; min-height: 100vh; }
+
+/* SIDEBAR */
+.sidebar {
+  width: 240px;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  height: 100vh;
+  z-index: 100;
+  overflow-y: auto;
+}
+
+.sidebar-logo {
+  padding: 28px 24px 20px;
+  border-bottom: 1px solid var(--border);
+}
+
+.sidebar-logo h1 {
+  font-family: 'Cinzel', serif;
+  font-size: 15px;
+  color: var(--gold);
+  letter-spacing: 0.08em;
+  font-weight: 400;
+  line-height: 1.4;
+}
+
+.sidebar-logo p {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  color: var(--text-dim);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  margin-top: 4px;
+}
+
+.sidebar-user {
+  padding: 10px 20px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.sidebar-user-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--sage);
+  flex-shrink: 0;
+}
+
+.sidebar-user-name {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  color: var(--text-muted);
+  letter-spacing: 0.1em;
+}
+
+.sidebar-user-logout {
+  margin-left: auto;
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  color: var(--text-dim);
+  cursor: pointer;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  background: none;
+  border: none;
+  padding: 2px 6px;
+}
+.sidebar-user-logout:hover { color: var(--crimson); }
+
+.sidebar-nav { flex: 1; padding: 16px 0; }
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 24px;
+  cursor: pointer;
+  transition: all 0.2s;
+  border-left: 2px solid transparent;
+  font-size: 15px;
+  color: var(--text-muted);
+  font-family: 'DM Mono', monospace;
+  letter-spacing: 0.05em;
+}
+
+.nav-item:hover { color: var(--text); background: rgba(155,111,212,0.08); }
+.nav-item.active { color: var(--purple-light); border-left-color: var(--purple); background: rgba(155,111,212,0.12); }
+.nav-icon { font-size: 16px; width: 20px; text-align: center; }
+
+.sidebar-stats {
+  padding: 16px 20px;
+  border-top: 1px solid var(--border);
+}
+
+.stat-mini { margin-bottom: 10px; }
+.stat-mini-label { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--text-dim); letter-spacing: 0.2em; text-transform: uppercase; }
+.stat-mini-value { font-family: 'Cinzel', serif; font-size: 22px; color: var(--gold); margin-top: 2px; }
+
+/* MAIN */
+.main { margin-left: 240px; flex: 1; padding: 32px; min-height: 100vh; }
+
+/* PAGE HEADER */
+.page-header { margin-bottom: 28px; }
+.page-header h2 { font-family: 'Cinzel', serif; font-size: 24px; font-weight: 400; color: var(--text); }
+.page-header p { font-size: 15px; color: var(--text-muted); margin-top: 4px; font-style: italic; }
+
+/* CARDS GRID */
+.cards-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 28px; }
+
+.stat-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  padding: 20px;
+  position: relative;
+  overflow: hidden;
+}
+
+.stat-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 3px; height: 100%;
+}
+
+.stat-card.gold::before { background: var(--gold); }
+.stat-card.purple::before { background: var(--purple); }
+.stat-card.sage::before { background: var(--sage); }
+.stat-card.crimson::before { background: var(--crimson); }
+
+.stat-label { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--text-dim); letter-spacing: 0.25em; text-transform: uppercase; margin-bottom: 8px; }
+.stat-value { font-family: 'Cinzel', serif; font-size: 30px; color: var(--text); }
+.stat-sub { font-size: 13px; color: var(--text-muted); margin-top: 4px; font-style: italic; }
+
+/* TABLE */
+.table-container {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+
+.table-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px 24px;
+  border-bottom: 1px solid var(--border);
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.table-title { font-family: 'Cinzel', serif; font-size: 16px; font-weight: 400; color: var(--text); }
+
+.btn {
+  font-family: 'DM Mono', monospace;
+  font-size: 12px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  padding: 9px 18px;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s;
+}
+
+.btn-primary { background: var(--purple); color: white; }
+.btn-primary:hover { background: var(--purple-light); color: var(--bg); }
+.btn-ghost { background: transparent; color: var(--text-muted); border: 1px solid var(--border); }
+.btn-ghost:hover { border-color: var(--border-hover); color: var(--text); }
+.btn-danger { background: transparent; color: var(--crimson); border: 1px solid rgba(192,64,74,0.3); font-size: 11px; padding: 5px 10px; }
+.btn-danger:hover { background: rgba(192,64,74,0.1); }
+.btn-sm { padding: 6px 12px; font-size: 11px; }
+.btn-sage { background: var(--sage); color: white; }
+.btn-sage:hover { opacity: 0.85; }
+
+table { width: 100%; border-collapse: collapse; }
+th {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  padding: 13px 20px;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+
+td {
+  padding: 15px 20px;
+  font-size: 15px;
+  color: var(--text-muted);
+  border-bottom: 1px solid rgba(255,255,255,0.03);
+  vertical-align: middle;
+}
+
+td:first-child { color: var(--text); font-size: 16px; }
+tr:hover td { background: rgba(155,111,212,0.05); }
+tr:last-child td { border-bottom: none; }
+
+/* BADGE */
+.badge {
+  display: inline-block;
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  padding: 3px 10px;
+}
+
+.badge-tarot { background: rgba(155,111,212,0.2); color: var(--purple-light); }
+.badge-buzios { background: rgba(75,185,205,0.2); color: #7dd5e8; }
+.badge-limpeza { background: rgba(90,158,122,0.15); color: #7ec49a; }
+.badge-radionica { background: rgba(100,155,245,0.2); color: #9ab8f5; }
+.badge-trabalho { background: rgba(192,64,74,0.2); color: #e08888; }
+.badge-pendente { background: rgba(201,168,76,0.2); color: var(--gold); }
+.badge-confirmado { background: rgba(100,155,245,0.2); color: #9ab8f5; }
+.badge-concluido { background: rgba(90,158,122,0.2); color: #7ec49a; }
+.badge-cancelado { background: rgba(192,64,74,0.15); color: #e08888; }
+.badge-andamento { background: rgba(201,168,76,0.15); color: var(--gold); }
+.badge-atrasado { background: rgba(192,64,74,0.3); color: #ff9999; animation: pulse 2s infinite; }
+
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.6} }
+
+/* SEARCH */
+.search-bar {
+  display: flex;
+  gap: 12px;
+  padding: 16px 24px;
+  border-bottom: 1px solid var(--border);
+  flex-wrap: wrap;
+}
+
+.search-input {
+  flex: 1;
+  min-width: 140px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 10px 14px;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 15px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.search-input:focus { border-color: var(--purple); }
+.search-input::placeholder { color: var(--text-dim); }
+select.search-input { cursor: pointer; }
+
+/* MODAL */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.75);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.modal {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  width: 100%;
+  max-width: 580px;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--border);
+}
+
+.modal-header h3 { font-family: 'Cinzel', serif; font-size: 17px; font-weight: 400; color: var(--text); }
+
+.modal-close {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 22px;
+  cursor: pointer;
+  padding: 4px 8px;
+  line-height: 1;
+}
+.modal-close:hover { color: var(--text); }
+
+.modal-body { padding: 24px; }
+
+.form-group { margin-bottom: 18px; }
+.form-label {
+  display: block;
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  margin-bottom: 7px;
+}
+
+.form-input {
+  width: 100%;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 11px 14px;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 16px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.form-input:focus { border-color: var(--purple); }
+.form-input::placeholder { color: var(--text-dim); }
+select.form-input { cursor: pointer; }
+textarea.form-input { resize: vertical; min-height: 80px; }
+
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 16px 24px;
+  border-top: 1px solid var(--border);
+}
+
+/* EMPTY STATE */
+.empty-state {
+  text-align: center;
+  padding: 60px 24px;
+  color: var(--text-dim);
+}
+.empty-state .empty-icon { font-size: 42px; margin-bottom: 16px; opacity: 0.4; }
+.empty-state p { font-style: italic; font-size: 16px; }
+
+/* DETAIL VIEW */
+.detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 20px; }
+.detail-item-label { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--text-dim); margin-bottom: 4px; }
+.detail-item-value { font-size: 16px; color: var(--text); }
+
+.history-item {
+  padding: 14px 0;
+  border-bottom: 1px solid var(--border);
+}
+.history-item:last-child { border-bottom: none; }
+.history-date { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--text-dim); margin-bottom: 4px; }
+.history-service { font-size: 15px; color: var(--text); margin-bottom: 4px; }
+.history-obs { font-size: 14px; color: var(--text-muted); font-style: italic; }
+
+/* TABS */
+.tabs { display: flex; border-bottom: 1px solid var(--border); margin-bottom: 0; }
+.tab {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  padding: 13px 20px;
+  cursor: pointer;
+  color: var(--text-dim);
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s;
+  background: none;
+  border-top: none;
+  border-left: none;
+  border-right: none;
+}
+.tab:hover { color: var(--text-muted); }
+.tab.active { color: var(--purple-light); border-bottom-color: var(--purple); }
+
+/* NOTIFICATION */
+.notification {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  background: var(--surface2);
+  border: 1px solid var(--purple);
+  padding: 14px 20px;
+  font-size: 14px;
+  color: var(--text);
+  z-index: 2000;
+  animation: slideIn 0.3s ease;
+  font-family: 'DM Mono', monospace;
+  letter-spacing: 0.05em;
+}
+
+@keyframes slideIn {
+  from { transform: translateX(100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+.divider-line { height: 1px; background: var(--border); margin: 24px 0; }
+
+/* AGENDA VIEW */
+.agenda-day { margin-bottom: 20px; }
+.agenda-day-header {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--gold);
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 8px;
+}
+.agenda-day-header.today-header { color: var(--purple-light); }
+
+.agenda-item {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  padding: 13px 16px;
+  border: 1px solid var(--border);
+  margin-bottom: 6px;
+  background: var(--surface);
+  transition: border-color 0.2s;
+  cursor: pointer;
+}
+.agenda-item:hover { border-color: var(--border-hover); }
+.agenda-item.today-item { border-left: 2px solid var(--purple); }
+
+.agenda-time {
+  font-family: 'DM Mono', monospace;
+  font-size: 14px;
+  color: var(--gold);
+  min-width: 50px;
+  margin-top: 2px;
+}
+
+.agenda-info h4 { font-size: 16px; color: var(--text); margin-bottom: 3px; }
+.agenda-info p { font-size: 14px; color: var(--text-muted); font-style: italic; }
+.agenda-obs { font-size: 15px; color: var(--text-muted); font-style: italic; margin-top: 3px; max-width: 300px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* ALERT BANNER */
+.alert-banner {
+  background: rgba(192,64,74,0.12);
+  border: 1px solid rgba(192,64,74,0.4);
+  padding: 14px 20px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+.alert-banner-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+.alert-banner-content h4 { font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase; color: #e08888; margin-bottom: 6px; }
+.alert-banner-content p { font-size: 14px; color: var(--text-muted); }
+
+/* SCROLLBAR */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--border); }
+::-webkit-scrollbar-thumb:hover { background: var(--border-hover); }
+
+/* PAGINATION */
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 16px 24px;
+  border-top: 1px solid var(--border);
+}
+.page-btn {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  padding: 6px 12px;
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.2s;
+  letter-spacing: 0.1em;
+}
+.page-btn:hover { border-color: var(--border-hover); color: var(--text); }
+.page-btn.active { background: var(--purple); border-color: var(--purple); color: white; }
+.page-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+.page-info { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--text-dim); letter-spacing: 0.1em; }
+
+/* LOGIN */
+.login-screen {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg);
+}
+.login-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  padding: 48px 40px;
+  width: 100%;
+  max-width: 380px;
+  text-align: center;
+}
+.login-card h1 {
+  font-family: 'Cinzel', serif;
+  font-size: 20px;
+  color: var(--gold);
+  letter-spacing: 0.1em;
+  margin-bottom: 6px;
+}
+.login-card p {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  color: var(--text-dim);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  margin-bottom: 36px;
+}
+.login-users { display: flex; flex-direction: column; gap: 12px; }
+.login-user-btn {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 20px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  color: var(--text);
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 19px;
+  text-align: left;
+}
+.login-user-btn:hover { border-color: var(--purple); background: rgba(155,111,212,0.08); }
+.login-user-icon { font-size: 22px; }
+.login-user-sub { font-family: 'DM Mono', monospace; font-size: 9px; color: var(--text-dim); letter-spacing: 0.15em; text-transform: uppercase; margin-top: 2px; }
+
+/* PHOTO UPLOAD */
+.photo-grid { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 8px; }
+.photo-thumb {
+  width: 90px; height: 90px;
+  object-fit: cover;
+  border: 1px solid var(--border);
+  cursor: pointer;
+  transition: border-color 0.2s;
+}
+.photo-thumb:hover { border-color: var(--purple); }
+.photo-upload-btn {
+  width: 90px; height: 90px;
+  border: 1px dashed var(--border);
+  background: var(--bg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  gap: 4px;
+  transition: border-color 0.2s;
+  color: var(--text-dim);
+  font-size: 22px;
+}
+.photo-upload-btn:hover { border-color: var(--purple); color: var(--purple-light); }
+.photo-upload-label { font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 0.1em; }
+
+/* LIGHTBOX */
+.lightbox {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.92);
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 16px;
+}
+.lightbox img {
+  max-width: 90vw;
+  max-height: 80vh;
+  object-fit: contain;
+  border: 1px solid var(--border);
+}
+.lightbox-controls { display: flex; gap: 12px; }
+
+/* FINANCE */
+.finance-table { width: 100%; border-collapse: collapse; }
+.finance-table th {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  padding: 10px 16px;
+  text-align: right;
+  border-bottom: 1px solid var(--border);
+}
+.finance-table th:first-child { text-align: left; }
+.finance-table td {
+  padding: 11px 16px;
+  font-size: 15px;
+  border-bottom: 1px solid rgba(255,255,255,0.03);
+  text-align: right;
+  color: var(--text-muted);
+}
+.finance-table td:first-child { text-align: left; color: var(--text); }
+.finance-table tr:last-child td { border-bottom: none; }
+.finance-table .total-row td { color: var(--gold); font-family: 'DM Mono', monospace; font-size: 14px; border-top: 1px solid var(--border); }
+
+/* DEBT */
+.debt-paid { color: #7ec49a !important; }
+.debt-overdue { color: #e08888 !important; }
+
+/* SETTINGS */
+.settings-section { margin-bottom: 32px; }
+.settings-section h3 { font-family: 'Cinzel', serif; font-size: 16px; font-weight: 400; color: var(--text); margin-bottom: 16px; padding-bottom: 10px; border-bottom: 1px solid var(--border); }
+.settings-row { display: flex; align-items: center; justify-content: space-between; padding: 14px 0; border-bottom: 1px solid rgba(255,255,255,0.03); }
+.settings-row-info h4 { font-size: 16px; color: var(--text); margin-bottom: 3px; }
+.settings-row-info p { font-size: 14px; color: var(--text-muted); font-style: italic; }
+
+/* OBS in table */
+.obs-cell { font-size: 15px; color: var(--text-muted); font-style: italic; max-width: 220px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* CURRENCY SELECTOR */
+.currency-field { display: flex; gap: 0; }
+.currency-select {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-right: none;
+  color: var(--gold);
+  font-family: 'DM Mono', monospace;
+  font-size: 13px;
+  padding: 11px 10px;
+  cursor: pointer;
+  outline: none;
+  min-width: 56px;
+  letter-spacing: 0.05em;
+  transition: border-color 0.2s;
+}
+.currency-select:focus { border-color: var(--purple); }
+.currency-field .form-input { border-radius: 0; }
+.currency-field .form-input:focus { border-color: var(--purple); }
+.eur-color { color: #a8d8c8 !important; }
+
+
+/* DUPLICATE CLIENT SUGGESTION */
+.dup-suggestion {
+  margin-top: 6px;
+  border: 1px solid rgba(201,168,76,0.35);
+  background: rgba(201,168,76,0.07);
+  border-radius: 4px;
+  overflow: hidden;
+}
+.dup-suggestion-header {
+  padding: 8px 12px;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--gold);
+  opacity: 0.7;
+}
+.dup-suggestion-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 9px 12px;
+  border-top: 1px solid rgba(201,168,76,0.15);
+  cursor: pointer;
+  transition: background 0.15s;
+  gap: 8px;
+}
+.dup-suggestion-item:hover { background: rgba(201,168,76,0.1); }
+.dup-suggestion-name { font-size: 14px; color: var(--text); font-weight: 500; }
+.dup-suggestion-meta { font-size: 12px; color: var(--text-muted); font-style: italic; }
+.dup-suggestion-badge {
+  font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--gold); border: 1px solid rgba(201,168,76,0.4);
+  padding: 2px 7px; border-radius: 10px; white-space: nowrap; flex-shrink: 0;
+}
+.form-input.input-warning { border-color: rgba(201,168,76,0.5) !important; }
+
+/* CONFIRM MODAL */
+.confirm-modal {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  width: 100%;
+  max-width: 380px;
+  padding: 0;
+}
+.confirm-modal-body {
+  padding: 28px 28px 20px;
+  text-align: center;
+}
+.confirm-modal-icon { font-size: 32px; margin-bottom: 12px; }
+.confirm-modal-title {
+  font-family: 'Cinzel', serif;
+  font-size: 16px;
+  font-weight: 400;
+  color: var(--text);
+  margin-bottom: 8px;
+}
+.confirm-modal-desc {
+  font-size: 14px;
+  color: var(--text-muted);
+  font-style: italic;
+}
+.confirm-modal-footer {
+  display: flex;
+  gap: 0;
+  border-top: 1px solid var(--border);
+}
+.confirm-modal-footer button {
+  flex: 1;
+  padding: 14px;
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.confirm-modal-footer .confirm-cancel {
+  background: transparent;
+  color: var(--text-muted);
+  border-right: 1px solid var(--border);
+}
+.confirm-modal-footer .confirm-cancel:hover { background: rgba(255,255,255,0.03); color: var(--text); }
+.confirm-modal-footer .confirm-ok {
+  background: transparent;
+  color: var(--crimson);
+}
+.confirm-modal-footer .confirm-ok:hover { background: rgba(192,64,74,0.12); }
+
+/* USER badge */
+.badge-user { background: rgba(155,111,212,0.15); color: var(--purple-light); font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 0.1em; padding: 2px 8px; text-transform: uppercase; }
+
+/* TOPBAR */
+.topbar {
+  position: fixed;
+  top: 0; left: 240px; right: 0;
+  height: 52px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  z-index: 90;
+  display: flex;
+  align-items: center;
+  padding: 0 24px;
+  gap: 12px;
+}
+
+.topbar-search {
+  flex: 1;
+  max-width: 480px;
+  position: relative;
+}
+
+.topbar-search-icon {
+  position: absolute;
+  left: 12px; top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-dim);
+  font-size: 14px;
+  pointer-events: none;
+}
+
+.topbar-search input {
+  width: 100%;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 8px 12px 8px 34px;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 15px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.topbar-search input:focus { border-color: var(--purple); }
+.topbar-search input::placeholder { color: var(--text-dim); }
+
+/* GLOBAL SEARCH RESULTS */
+.search-results {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0; right: 0;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  z-index: 200;
+  max-height: 420px;
+  overflow-y: auto;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+}
+
+.search-result-section {
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border);
+}
+.search-result-section:last-child { border-bottom: none; }
+
+.search-result-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  padding: 4px 16px 8px;
+}
+
+.search-result-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.search-result-item:hover { background: rgba(155,111,212,0.1); }
+.search-result-item-main { font-size: 15px; color: var(--text); }
+.search-result-item-sub { font-size: 13px; color: var(--text-muted); font-style: italic; }
+
+/* SORTABLE TH */
+th.sortable { cursor: pointer; user-select: none; }
+th.sortable:hover { color: var(--text-muted); }
+th.sortable.asc::after  { content: ' ↑'; color: var(--purple-light); }
+th.sortable.desc::after { content: ' ↓'; color: var(--purple-light); }
+
+/* CLIENT INACTIVE */
+.client-inactive td { opacity: 0.45; }
+.badge-inactive { background: rgba(90,78,120,0.2); color: var(--text-dim); font-family:'DM Mono',monospace; font-size:9px; letter-spacing:0.1em; padding:2px 8px; text-transform:uppercase; }
+
+/* CLIENT SUMMARY BOX */
+.client-summary {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  padding: 10px 14px;
+  margin-top: 8px;
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+.client-summary-item { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--text-muted); }
+.client-summary-item span { color: var(--gold); margin-left: 4px; }
+.client-summary-debt { color: #e08888 !important; }
+
+.main-with-topbar { padding-top: 84px; }
+@media (max-width: 768px) {
+  .sidebar { width: 200px; }
+  .main { margin-left: 200px; padding: 16px; }
+  .topbar { left: 200px; }
+  .cards-grid { grid-template-columns: repeat(2,1fr); }
+}
+@media (max-width: 580px) {
+  .sidebar { display: none; }
+  .main { margin-left: 0; }
+  .topbar { left: 0; }
+}
+</style>
+</head>
+<body>
+<div id="app"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
+
+
+<script type="text/babel">
+const { useState, useEffect, useRef } = React;
+
+// ── CONSTANTS ────────────────────────────────────────────
+const SERVICES = ['Leitura de Tarot', 'Jogo de Búzios', 'Mesa Radiônica'];
+const WORK_TYPES = ['Limpeza Energética', 'Amarração', 'Desfazimento', 'Proteção', 'Abertura de Caminhos', 'Limpeza Pesada', 'Trabalho de Justiça', 'Outro'];
+const STATUS = ['Pendente', 'Concluído', 'Cancelado'];
+const WORK_STATUS = ['Em andamento', 'Concluído', 'Cancelado'];
+const COUNTRIES = ['Brasil', 'Portugal', 'Outro país da Europa'];
+const USERS = ['Vivian', 'Thais'];
+const DEBT_STATUS = ['Aberta', 'Quitada'];
+const PAGE_SIZE = 20;
+
+const MONTHS = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+
+const ZODIAC = [
+  {sign:'Capricórnio', start:[12,22], end:[1,19]},
+  {sign:'Aquário',     start:[1,20],  end:[2,18]},
+  {sign:'Peixes',      start:[2,19],  end:[3,20]},
+  {sign:'Áries',       start:[3,21],  end:[4,19]},
+  {sign:'Touro',       start:[4,20],  end:[5,20]},
+  {sign:'Gêmeos',      start:[5,21],  end:[6,20]},
+  {sign:'Câncer',      start:[6,21],  end:[7,22]},
+  {sign:'Leão',        start:[7,23],  end:[8,22]},
+  {sign:'Virgem',      start:[8,23],  end:[9,22]},
+  {sign:'Libra',       start:[9,23],  end:[10,22]},
+  {sign:'Escorpião',   start:[10,23], end:[11,21]},
+  {sign:'Sagitário',   start:[11,22], end:[12,21]},
+];
+
+// ── UTILS ────────────────────────────────────────────────
+function parseMoney(val) {
+  if (!val && val !== 0) return 0;
+  if (typeof val === 'number') return val;
+  return parseFloat(String(val).replace(/[^\d,.-]/g,'').replace(',','.')) || 0;
+}
+
+function formatMoney(val) {
+  const n = parseMoney(val);
+  return n.toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2});
+}
+
+function formatValue(val, currency) {
+  if (!val && val !== 0) return '—';
+  const sym = (currency === 'EUR') ? '€' : 'R$';
+  return `${sym} ${formatMoney(val)}`;
+}
+
+function toEur(val, currency, rate) {
+  const v = parseMoney(val);
+  if (!v) return 0;
+  return currency === 'EUR' ? v : v / Math.max(rate, 0.01);
+}
+
+function getRemaining(total, paid) {
+  const r = parseMoney(total) - parseMoney(paid);
+  return Math.max(0, r);
+}
+
+function formatDate(d) {
+  if (!d) return '—';
+  const [y, m, day] = d.split('-');
+  return `${day}/${m}/${y}`;
+}
+
+function today() {
+  return new Date().toISOString().split('T')[0];
+}
+
+function newId() {
+  return crypto.randomUUID();
+}
+
+function sortByDate(arr, field = 'date', dir = 'desc') {
+  return [...arr].sort((a, b) => {
+    const da = new Date(a[field] || '1970-01-01');
+    const db = new Date(b[field] || '1970-01-01');
+    return dir === 'desc' ? db - da : da - db;
+  });
+}
+
+// Utility: group items by date proximity (today / tomorrow / this week / others)
+function getDateGroups(items, dateField = 'date') {
+  const todayStr = today();
+  const tom = new Date(); tom.setDate(tom.getDate()+1);
+  const tomorrowStr = tom.toISOString().slice(0,10);
+  const wk = new Date(); wk.setDate(wk.getDate()+7);
+  const weekEndStr = wk.toISOString().slice(0,10);
+  return [
+    { key:'hoje',   label:'Hoje',        color:'var(--gold)',         items: items.filter(i => i[dateField] === todayStr) },
+    { key:'amanha', label:'Amanhã',      color:'var(--purple-light)', items: items.filter(i => i[dateField] === tomorrowStr) },
+    { key:'semana', label:'Esta Semana', color:'#7ec49a',             items: items.filter(i => i[dateField] > tomorrowStr && i[dateField] <= weekEndStr) },
+    { key:'outros', label:'Outros',      color:'var(--text-dim)',     items: items.filter(i => !i[dateField] || (i[dateField] !== todayStr && i[dateField] !== tomorrowStr && (i[dateField] > weekEndStr || i[dateField] < todayStr))) },
+  ];
+}
+
+function getZodiac(birthdate) {
+  if (!birthdate) return null;
+  const d = new Date(birthdate);
+  const m = d.getMonth() + 1;
+  const day = d.getDate();
+  for (const z of ZODIAC) {
+    const [sm, sd] = z.start;
+    const [em, ed] = z.end;
+    if (sm > em) {
+      if ((m === sm && day >= sd) || (m === em && day <= ed)) return z.sign;
+    } else {
+      if ((m === sm && day >= sd) || (m > sm && m < em) || (m === em && day <= ed)) return z.sign;
+    }
+  }
+  return null;
+}
+
+function clientName(cl, fallback) {
+  if (!cl) return fallback || '—';
+  return cl.nickname || cl.name;
+}
+
+function isOverdue(apt) {
+  if (apt.status !== 'Pendente' && apt.status !== 'Confirmado') return false;
+  if (!apt.date) return false;
+  const aptDate = new Date(`${apt.date}T${apt.time || '23:59'}:00`);
+  const diff = (new Date() - aptDate) / (1000 * 60 * 60);
+  return diff > 24;
+}
+
+// ── STORAGE ──────────────────────────────────────────────
+function loadData(key, def) {
+  try { const v = localStorage.getItem('agenda_' + key); return v ? JSON.parse(v) : def; } catch { return def; }
+}
+function saveData(key, val) {
+  try { localStorage.setItem('agenda_' + key, JSON.stringify(val)); } catch {}
+}
+
+// ── PAGINATION HOOK ──────────────────────────────────────
+function usePagination(items, pageSize = PAGE_SIZE, sortKey = '') {
+  const [page, setPage] = useState(1);
+  // Reset on length change OR when sort order changes
+  const itemsLen = items.length;
+  useEffect(() => setPage(1), [itemsLen, sortKey]);
+  const totalPages = Math.max(1, Math.ceil(items.length / pageSize));
+  const paged = items.slice((page - 1) * pageSize, page * pageSize);
+  return { paged, page, setPage, totalPages };
+}
+
+// ── PAGINATION UI ────────────────────────────────────────
+function Pagination({ page, totalPages, setPage, total }) {
+  if (totalPages <= 1) return null;
+  const pages = [];
+  for (let i = 1; i <= totalPages; i++) {
+    if (i === 1 || i === totalPages || (i >= page - 1 && i <= page + 1)) {
+      pages.push(i);
+    } else if (pages[pages.length - 1] !== '...') {
+      pages.push('...');
+    }
+  }
+  return (
+    <div className="pagination">
+      <button className="page-btn" onClick={() => setPage(p => Math.max(1, p-1))} disabled={page === 1}>←</button>
+      {pages.map((p, i) =>
+        p === '...'
+          ? <span key={i} className="page-info">···</span>
+          : <button key={p} className={`page-btn${page === p ? ' active' : ''}`} onClick={() => setPage(p)}>{p}</button>
+      )}
+      <button className="page-btn" onClick={() => setPage(p => Math.min(totalPages, p+1))} disabled={page === totalPages}>→</button>
+      <span className="page-info">{total} registros</span>
+    </div>
+  );
+}
+
+// ── BADGE CLASS ──────────────────────────────────────────
+function badgeClass(val) {
+  const map = {
+    'Leitura de Tarot': 'badge-tarot',
+    'Jogo de Búzios': 'badge-buzios',
+    'Limpeza Energética': 'badge-limpeza',
+    'Mesa Radiônica': 'badge-radionica',
+    'Pendente': 'badge-pendente',
+    'Concluído': 'badge-concluido',
+    'Cancelado': 'badge-cancelado',
+    'Em andamento': 'badge-andamento',
+  };
+  const cls = map[val];
+  if (!cls && val) return 'badge badge-trabalho';
+  return `badge ${cls || ''}`;
+}
+
+// ── CURRENCY FIELD ────────────────────────────────────────
+function CurrencyField({ value, currency, onValueChange, onCurrencyChange, placeholder }) {
+  return (
+    <div className="currency-field">
+      <select className="currency-select" value={currency} onChange={e => onCurrencyChange(e.target.value)}>
+        <option value="BRL">R$</option>
+        <option value="EUR">€</option>
+      </select>
+      <input
+        type="number" min="0" step="0.01"
+        className="form-input"
+        value={value}
+        onChange={e => onValueChange(e.target.value)}
+        placeholder={placeholder || '0,00'}
+      />
+    </div>
+  );
+}
+
+// ── NOTIFICATION ─────────────────────────────────────────
+function Notification({ msg, onClose }) {
+  useEffect(() => { const t = setTimeout(onClose, 3000); return () => clearTimeout(t); }, []);
+  return <div className="notification">✦ {msg}</div>;
+}
+
+// ── MODAL ─────────────────────────────────────────────────
+function Modal({ title, onClose, children, footer, wide }) {
+  useEffect(() => {
+    function handleKey(e) { if (e.key === 'Escape') onClose(); }
+    document.addEventListener('keydown', handleKey);
+    return () => document.removeEventListener('keydown', handleKey);
+  }, []);
+  return (
+    <div className="modal-overlay" onClick={e => e.target === e.currentTarget && onClose()}>
+      <div className="modal" style={wide ? {maxWidth:720} : {}}>
+        <div className="modal-header">
+          <h3>{title}</h3>
+          <button className="modal-close" onClick={onClose}>×</button>
+        </div>
+        <div className="modal-body">{children}</div>
+        {footer && <div className="modal-footer">{footer}</div>}
+      </div>
+    </div>
+  );
+}
+
+// ── CONFIRM MODAL ────────────────────────────────────────
+function ConfirmModal({ title, desc, icon, onConfirm, onCancel }) {
+  useEffect(() => {
+    function handleKey(e) { if (e.key === 'Escape') onCancel(); }
+    document.addEventListener('keydown', handleKey);
+    return () => document.removeEventListener('keydown', handleKey);
+  }, []);
+  return (
+    <div className="modal-overlay" onClick={e => e.target === e.currentTarget && onCancel()}>
+      <div className="confirm-modal">
+        <div className="confirm-modal-body">
+          {icon && <div className="confirm-modal-icon">{icon}</div>}
+          <div className="confirm-modal-title">{title}</div>
+          {desc && <div className="confirm-modal-desc">{desc}</div>}
+        </div>
+        <div className="confirm-modal-footer">
+          <button className="confirm-cancel" onClick={onCancel}>Cancelar</button>
+          <button className="confirm-ok" onClick={onConfirm}>Confirmar</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ── LOGIN ────────────────────────────────────────────────
+function Login({ onLogin }) {
+  return (
+    <div className="login-screen">
+      <div className="login-card">
+        <h1>Agenda Espiritual</h1>
+        <p>Vivi de Mulambo · Quem está acessando?</p>
+        <div className="login-users">
+          {USERS.map(u => (
+            <button key={u} className="login-user-btn" onClick={() => onLogin(u)}>
+              <span className="login-user-icon">{u === 'Vivian' ? '🌙' : '✦'}</span>
+              <div>
+                <div>{u}</div>
+                <div className="login-user-sub">clique para entrar</div>
+              </div>
+            </button>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ── LIGHTBOX ─────────────────────────────────────────────
+function Lightbox({ src, onClose }) {
+  return (
+    <div className="lightbox" onClick={onClose}>
+      <img src={src} onClick={e => e.stopPropagation()} alt="Foto" />
+      <div className="lightbox-controls" onClick={e => e.stopPropagation()}>
+        <a href={src} download="foto_cliente.jpg">
+          <button className="btn btn-ghost">⬇ Download</button>
+        </a>
+        <button className="btn btn-ghost" onClick={onClose}>✕ Fechar</button>
+      </div>
+    </div>
+  );
+}
+
+// ── DASHBOARD TABS ITEMS (outside to avoid re-creation on each render) ──────
+function AptItem({ a, clients, onClientClick }) {
+  const cl = clients.find(c => c.id === a.clientId);
+  const overdueApt = isOverdue(a);
+  return (
+    <div className="agenda-item" style={{margin:0,border:'none',borderBottom:'1px solid var(--border)'}}>
+      <div className="agenda-time">{a.time || '—'}</div>
+      <div className="agenda-info" style={{flex:1}}>
+        <h4
+          style={{cursor: cl ? 'pointer' : 'default', borderBottom: cl ? '1px dotted var(--purple-light)' : 'none', display:'inline'}}
+          onClick={() => cl && onClientClick && onClientClick(cl.id)}
+        >{cl ? clientName(cl) : a.clientName || '—'}</h4>
+        <p>{a.service} · {formatDate(a.date)}</p>
+        {a.notes && <div className="agenda-obs">{a.notes}</div>}
+      </div>
+      <div style={{display:'flex',flexDirection:'column',gap:4,alignItems:'flex-end',marginLeft:'auto'}}>
+        {a.value && <span style={{fontFamily:'DM Mono,monospace',fontSize:12,color:a.currency==='EUR'?'#a8d8c8':'var(--gold)'}}>{formatValue(a.value,a.currency)}</span>}
+        {overdueApt && <span className="badge badge-atrasado">Atrasado</span>}
+      </div>
+    </div>
+  );
+}
+
+function WrkItem({ w, clients, onClientClick }) {
+  const cl = clients.find(c => c.id === w.clientId);
+  return (
+    <div className="agenda-item" style={{margin:0,border:'none',borderBottom:'1px solid var(--border)'}}>
+      <div className="agenda-time">{w.time || '—'}</div>
+      <div className="agenda-info" style={{flex:1}}>
+        <h4
+          style={{cursor: cl ? 'pointer' : 'default', borderBottom: cl ? '1px dotted #e08888' : 'none', display:'inline'}}
+          onClick={() => cl && onClientClick && onClientClick(cl.id)}
+        >{cl ? clientName(cl) : w.clientName || '—'}</h4>
+        <p>{w.type} · {formatDate(w.startDate)}</p>
+        {w.description && <div className="agenda-obs">{w.description}</div>}
+      </div>
+      {w.value && <span style={{fontFamily:'DM Mono,monospace',fontSize:12,color:w.currency==='EUR'?'#a8d8c8':'var(--gold)',marginLeft:'auto',alignSelf:'center'}}>{formatValue(w.value,w.currency)}</span>}
+    </div>
+  );
+}
+
+// ── DASHBOARD TABS ───────────────────────────────────────
+function DashboardTabs({ appointments, works, clients, onClientClick }) {
+  const [activeTab, setActiveTab] = useState('apt-pendente');
+  const today_str = today();
+
+  const tabs = [
+    { id:'apt-pendente',  label:'Atend. Pendentes',  color:'var(--gold)',         icon:'◷' },
+    { id:'apt-concluido', label:'Atend. Concluídos', color:'#7ec49a',             icon:'◷' },
+    { id:'wrk-andamento', label:'Trab. Andamento',   color:'#e08888',             icon:'🕯' },
+    { id:'wrk-concluido', label:'Trab. Concluídos',  color:'var(--purple-light)', icon:'🕯' },
+  ];
+
+  const aptPendentes  = sortByDate(appointments.filter(a => a.status === 'Pendente'), 'date', 'asc');
+  const aptConcluidos = sortByDate(appointments.filter(a => a.status === 'Concluído'), 'date', 'desc');
+  const wrkAndamento  = sortByDate(works.filter(w => w.status === 'Em andamento'), 'startDate', 'asc');
+  const wrkConcluidos = sortByDate(works.filter(w => w.status === 'Concluído'), 'startDate', 'desc');
+
+  const counts = {
+    'apt-pendente': aptPendentes.length,
+    'apt-concluido': aptConcluidos.length,
+    'wrk-andamento': wrkAndamento.length,
+    'wrk-concluido': wrkConcluidos.length,
+  };
+
+  const activeColor = tabs.find(t => t.id === activeTab)?.color || 'var(--purple)';
+
+  return (
+    <div className="table-container">
+      <div style={{display:'flex',borderBottom:'1px solid var(--border)',overflowX:'auto'}}>
+        {tabs.map(t => (
+          <button key={t.id} onClick={() => setActiveTab(t.id)} style={{
+            display:'flex', alignItems:'center', gap:6,
+            padding:'12px 14px',
+            background:'none', border:'none',
+            borderBottom: activeTab===t.id ? `2px solid ${t.color}` : '2px solid transparent',
+            color: activeTab===t.id ? t.color : 'var(--text-dim)',
+            cursor:'pointer', transition:'all 0.2s',
+            fontFamily:'DM Mono,monospace', fontSize:9, letterSpacing:'0.1em', textTransform:'uppercase',
+            marginBottom:'-1px', whiteSpace:'nowrap', flex:'1', justifyContent:'center'
+          }}>
+            <span>{t.icon}</span>
+            <span>{t.label}</span>
+            <span style={{
+              background: activeTab===t.id ? t.color : 'var(--surface2)',
+              color: activeTab===t.id ? 'var(--bg)' : 'var(--text-dim)',
+              borderRadius:'10px', padding:'1px 6px', fontSize:9
+            }}>{counts[t.id]}</span>
+          </button>
+        ))}
+      </div>
+
+      {activeTab === 'apt-pendente' && (
+        aptPendentes.length === 0
+          ? <div className="empty-state"><div className="empty-icon">🌙</div><p>Nenhum atendimento pendente</p></div>
+          : aptPendentes.map(a => <AptItem key={a.id} a={a} clients={clients} onClientClick={onClientClick} />)
+      )}
+      {activeTab === 'apt-concluido' && (
+        aptConcluidos.length === 0
+          ? <div className="empty-state"><div className="empty-icon">✦</div><p>Nenhum atendimento concluído</p></div>
+          : aptConcluidos.map(a => <AptItem key={a.id} a={a} clients={clients} onClientClick={onClientClick} />)
+      )}
+      {activeTab === 'wrk-andamento' && (
+        wrkAndamento.length === 0
+          ? <div className="empty-state"><div className="empty-icon">🕯️</div><p>Nenhum trabalho em andamento</p></div>
+          : wrkAndamento.map(w => <WrkItem key={w.id} w={w} clients={clients} onClientClick={onClientClick} />)
+      )}
+      {activeTab === 'wrk-concluido' && (
+        wrkConcluidos.length === 0
+          ? <div className="empty-state"><div className="empty-icon">✦</div><p>Nenhum trabalho concluído</p></div>
+          : wrkConcluidos.map(w => <WrkItem key={w.id} w={w} clients={clients} onClientClick={onClientClick} />)
+      )}
+    </div>
+  );
+}
+
+// ── DASHBOARD ────────────────────────────────────────────
+function Dashboard({ clients, appointments, works, debts, currentUser, onNavigate }) {
+  const [detailClient, setDetailClient] = useState(null);
+
+  function openClientDetail(clientId) {
+    const cl = clients.find(c => c.id === clientId);
+    if (cl) setDetailClient(cl);
+  }
+
+  const today_str = today();
+  const thisMonth = new Date().toISOString().slice(0, 7);
+  const todayApts = appointments.filter(a => a.date === today_str && a.status !== 'Cancelado');
+  const monthApts = appointments.filter(a => a.date && a.date.startsWith(thisMonth) && a.status !== 'Cancelado');
+  const concluded = appointments.filter(a => a.status === 'Concluído').length;
+  const recorrentes = clients.filter(c => appointments.filter(a => a.clientId === c.id).length > 1).length;
+  const openDebts = (debts||[]).filter(d => d.status !== 'Quitada');
+  const openDebtTotal = openDebts.reduce((s, d) => s + parseMoney(getRemaining(d.total, d.paid)), 0);
+
+  const overdue = appointments.filter(isOverdue);
+
+  // Próximo atendimento futuro pendente
+  const nextApt = sortByDate(
+    appointments.filter(a => a.date >= today_str && a.status === 'Pendente'), 'date', 'asc'
+  )[0];
+  const nextAptClient = nextApt ? clients.find(c => c.id === nextApt.clientId) : null;
+
+  const byService = SERVICES.map(s => ({
+    name: s,
+    count: appointments.filter(a => a.service === s && a.status !== 'Cancelado').length
+  })).filter(s => s.count > 0).sort((a, b) => b.count - a.count);
+
+  const byWorkType = WORK_TYPES.map(t => ({
+    name: t,
+    count: works.filter(w => w.type === t && w.status !== 'Cancelado').length
+  })).filter(w => w.count > 0).sort((a, b) => b.count - a.count);
+
+  const hora = new Date().getHours();
+  const saudacao = hora < 12 ? 'Bom dia' : hora < 18 ? 'Boa tarde' : 'Boa noite';
+
+  const clientApts = detailClient ? sortByDate(appointments.filter(a => a.clientId === detailClient.id), 'date', 'desc') : [];
+  const clientWrks = detailClient ? sortByDate(works.filter(w => w.clientId === detailClient.id), 'startDate', 'desc') : [];
+  const clientDebts = detailClient ? sortByDate((debts||[]).filter(d => d.clientId === detailClient.id && d.status !== 'Quitada'), 'dueDate', 'desc') : [];
+
+  return (
+    <div>
+      {detailClient && (
+        <Modal title="Ficha do Cliente" onClose={() => setDetailClient(null)} wide>
+          <div className="detail-grid">
+            <div><div className="detail-item-label">Nome</div><div className="detail-item-value">{detailClient.name}</div></div>
+            <div><div className="detail-item-label">Telefone</div><div className="detail-item-value">{detailClient.phone || '—'}</div></div>
+            <div><div className="detail-item-label">País</div><div className="detail-item-value">{detailClient.country || '—'}</div></div>
+            <div><div className="detail-item-label">Nascimento</div><div className="detail-item-value">{formatDate(detailClient.birthdate)}</div></div>
+            <div><div className="detail-item-label">Signo</div><div className="detail-item-value">{getZodiac(detailClient.birthdate) || '—'}</div></div>
+            <div style={{gridColumn:'1/-1'}}><div className="detail-item-label">Observações</div><div className="detail-item-value" style={{fontStyle:'italic',color:'var(--text-muted)'}}>{detailClient.notes || '—'}</div></div>
+          </div>
+          {(detailClient.photos||[]).length > 0 && (
+            <>
+              <div className="divider-line"/>
+              <div style={{marginBottom:12,fontFamily:'DM Mono,monospace',fontSize:10,letterSpacing:'0.2em',textTransform:'uppercase',color:'var(--text-dim)'}}>Fotos</div>
+              <div className="photo-grid">
+                {detailClient.photos.map((src, i) => (
+                  <img key={i} src={src} className="photo-thumb" alt="" />
+                ))}
+              </div>
+            </>
+          )}
+          <div className="divider-line"/>
+          <ClientHistoryTabs clientApts={clientApts} clientWrks={clientWrks} clientDebts={clientDebts} />
+        </Modal>
+      )}
+
+      <div className="page-header">
+        <h2>Visão Geral</h2>
+        <p>{saudacao}, <strong style={{color:'var(--purple-light)'}}>{currentUser}</strong> ✦</p>
+      </div>
+
+      {overdue.length > 0 && (
+        <div className="alert-banner">
+          <div className="alert-banner-icon">⚠️</div>
+          <div className="alert-banner-content">
+            <h4>Leituras com atraso (&gt;24h)</h4>
+            <p>
+              {overdue.map((a, i) => {
+                const cl = clients.find(c => c.id === a.clientId);
+                return (i > 0 ? ' · ' : '') + (cl ? clientName(cl) : a.clientName || '?') + ' — ' + a.service;
+              })}
+            </p>
+          </div>
+        </div>
+      )}
+
+      {/* cards topo — 5 cards em linha */}
+      <div className="cards-grid" style={{gridTemplateColumns:'repeat(5,1fr)'}}>
+        <div className="stat-card gold">
+          <div className="stat-label">Hoje</div>
+          <div className="stat-value">{todayApts.length}</div>
+          <div className="stat-sub">atendimento{todayApts.length !== 1 ? 's' : ''}</div>
+        </div>
+        <div className="stat-card purple">
+          <div className="stat-label">Este mês</div>
+          <div className="stat-value">{monthApts.length}</div>
+          <div className="stat-sub">agendamentos</div>
+        </div>
+        <div className="stat-card sage">
+          <div className="stat-label">Clientes</div>
+          <div className="stat-value">{clients.filter(c=>!c.inactive).length}</div>
+          <div className="stat-sub">{recorrentes} recorrentes</div>
+        </div>
+        <div className="stat-card crimson">
+          <div className="stat-label">Concluídos</div>
+          <div className="stat-value">{concluded}</div>
+          <div className="stat-sub">atendimentos</div>
+        </div>
+        <div className="stat-card" style={{borderLeft:'3px solid #e08888'}}>
+          <div className="stat-label" style={{color:'#e08888'}}>Dívidas em aberto</div>
+          <div className="stat-value" style={{fontSize:openDebtTotal>0?18:28,color:openDebtTotal>0?'#e08888':'var(--text-dim)'}}>
+            {openDebts.length > 0 ? `R$ ${formatMoney(openDebtTotal)}` : '—'}
+          </div>
+          <div className="stat-sub">{openDebts.length} dívida{openDebts.length !== 1 ? 's' : ''}</div>
+        </div>
+      </div>
+
+      {/* próximo atendimento destaque */}
+      {nextApt && (
+        <div style={{
+          background:'linear-gradient(135deg, rgba(155,111,212,0.12), rgba(201,168,76,0.08))',
+          border:'1px solid rgba(155,111,212,0.3)',
+          padding:'14px 20px', marginBottom:16,
+          display:'flex', alignItems:'center', gap:16
+        }}>
+          <div style={{fontFamily:'DM Mono,monospace',fontSize:10,letterSpacing:'0.2em',textTransform:'uppercase',color:'var(--purple-light)',minWidth:110}}>
+            Próximo Atend.
+          </div>
+          <div style={{flex:1}}>
+            <span
+              style={{fontSize:16,color:'var(--text)',cursor:'pointer',borderBottom:'1px dotted var(--purple-light)'}}
+              onClick={() => nextAptClient && openClientDetail(nextAptClient.id)}
+            >
+              {nextAptClient ? clientName(nextAptClient) : nextApt.clientName || '—'}
+            </span>
+            <span style={{fontSize:14,color:'var(--text-muted)',marginLeft:12}}>{nextApt.service}</span>
+          </div>
+          <div style={{fontFamily:'DM Mono,monospace',fontSize:13,color:'var(--gold)'}}>
+            {formatDate(nextApt.date)} {nextApt.time && `às ${nextApt.time}`}
+          </div>
+        </div>
+      )}
+
+      {/* abas — largura total */}
+      <DashboardTabs appointments={appointments} works={works} clients={clients} onClientClick={openClientDetail} />
+
+      {/* mais solicitados — abaixo, em duas colunas */}
+      <div className="table-container" style={{marginTop:16}}>
+        <div className="table-header"><span className="table-title">Mais Solicitados</span></div>
+        <div style={{display:'grid', gridTemplateColumns:'1fr 1fr', gap:0}}>
+          <div style={{padding:'16px 24px', borderRight:'1px solid var(--border)'}}>
+            <div style={{fontFamily:'DM Mono,monospace',fontSize:9,letterSpacing:'0.2em',color:'var(--purple-light)',textTransform:'uppercase',marginBottom:12}}>◷ Atendimentos</div>
+            {byService.length === 0
+              ? <p style={{color:'var(--text-dim)',fontStyle:'italic',fontSize:14}}>Sem dados</p>
+              : byService.map(s => (
+                <div key={s.name} style={{marginBottom:12}}>
+                  <div style={{display:'flex',justifyContent:'space-between',marginBottom:5}}>
+                    <span style={{fontSize:15,color:'var(--text)'}}>{s.name}</span>
+                    <span style={{fontFamily:'DM Mono,monospace',fontSize:13,color:'var(--gold)'}}>{s.count}</span>
+                  </div>
+                  <div style={{height:3,background:'var(--border)'}}>
+                    <div style={{height:'100%',width:`${(s.count/byService[0].count)*100}%`,background:'var(--purple)',transition:'width 0.5s'}}/>
+                  </div>
+                </div>
+              ))
+            }
+          </div>
+          <div style={{padding:'16px 24px'}}>
+            <div style={{fontFamily:'DM Mono,monospace',fontSize:9,letterSpacing:'0.2em',color:'#e08888',textTransform:'uppercase',marginBottom:12}}>🕯 Trabalhos</div>
+            {byWorkType.length === 0
+              ? <p style={{color:'var(--text-dim)',fontStyle:'italic',fontSize:14}}>Sem dados</p>
+              : byWorkType.map(w => (
+                <div key={w.name} style={{marginBottom:12}}>
+                  <div style={{display:'flex',justifyContent:'space-between',marginBottom:5}}>
+                    <span style={{fontSize:15,color:'var(--text)'}}>{w.name}</span>
+                    <span style={{fontFamily:'DM Mono,monospace',fontSize:13,color:'#e08888'}}>{w.count}</span>
+                  </div>
+                  <div style={{height:3,background:'var(--border)'}}>
+                    <div style={{height:'100%',width:`${(w.count/byWorkType[0].count)*100}%`,background:'#e08888',transition:'width 0.5s'}}/>
+                  </div>
+                </div>
+              ))
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ── CLIENT HISTORY TABS ──────────────────────────────────
+function ClientHistoryTabs({ clientApts, clientWrks, clientDebts }) {
+  const [activeTab, setActiveTab] = useState('atendimentos');
+  const tabs = [
+    { id:'atendimentos', icon:'◷', label:'Atendimentos', count:clientApts.length, color:'var(--purple-light)' },
+    { id:'trabalhos',    icon:'🕯', label:'Trabalhos',    count:clientWrks.length, color:'#e08888' },
+    { id:'dividas',      icon:'◉', label:'Dívidas',      count:clientDebts.length, color:'var(--gold)' },
+  ];
+  return (
+    <>
+      <div style={{display:'flex',gap:0,marginBottom:20,borderBottom:'1px solid var(--border)'}}>
+        {tabs.map(t => (
+          <button key={t.id} onClick={() => setActiveTab(t.id)} style={{
+            display:'flex', alignItems:'center', gap:8,
+            padding:'12px 20px',
+            background:'none', border:'none',
+            borderBottom: activeTab===t.id ? `2px solid ${t.color}` : '2px solid transparent',
+            color: activeTab===t.id ? t.color : 'var(--text-dim)',
+            cursor:'pointer', transition:'all 0.2s',
+            fontFamily:'DM Mono,monospace', fontSize:11, letterSpacing:'0.15em', textTransform:'uppercase',
+            marginBottom:'-1px'
+          }}>
+            <span>{t.icon}</span>
+            <span>{t.label}</span>
+            <span style={{
+              background: activeTab===t.id ? t.color : 'var(--surface2)',
+              color: activeTab===t.id ? 'var(--bg)' : 'var(--text-dim)',
+              borderRadius:'10px', padding:'1px 7px', fontSize:10
+            }}>{t.count}</span>
+          </button>
+        ))}
+      </div>
+
+      {activeTab === 'atendimentos' && (
+        clientApts.length === 0
+          ? <p style={{color:'var(--text-dim)',fontStyle:'italic',fontSize:14}}>Nenhum atendimento registrado</p>
+          : clientApts.map(a => (
+            <div key={a.id} className="history-item">
+              <div style={{display:'flex',alignItems:'center',justifyContent:'space-between'}}>
+                <div className="history-date">{formatDate(a.date)} {a.time && `às ${a.time}`}</div>
+                {a.value && <span style={{fontFamily:'DM Mono,monospace',fontSize:12,color: a.currency==='EUR'?'#a8d8c8':'var(--gold)'}}>{formatValue(a.value, a.currency)}</span>}
+              </div>
+              <div className="history-service" style={{marginTop:4}}>
+                <span className={badgeClass(a.service)}>{a.service}</span>
+                <span className={badgeClass(a.status)} style={{marginLeft:6}}>{a.status}</span>
+                {a.createdBy && <span className="badge badge-user" style={{marginLeft:6}}>{a.createdBy}</span>}
+              </div>
+              {a.notes && <div className="history-obs">{a.notes}</div>}
+            </div>
+          ))
+      )}
+
+      {activeTab === 'trabalhos' && (
+        clientWrks.length === 0
+          ? <p style={{color:'var(--text-dim)',fontStyle:'italic',fontSize:14}}>Nenhum trabalho registrado</p>
+          : clientWrks.map(w => (
+            <div key={w.id} className="history-item">
+              <div style={{display:'flex',alignItems:'center',justifyContent:'space-between'}}>
+                <div className="history-date">{formatDate(w.startDate)} {w.time && `às ${w.time}`}</div>
+                {w.value && <span style={{fontFamily:'DM Mono,monospace',fontSize:12,color: w.currency==='EUR'?'#a8d8c8':'var(--gold)'}}>{formatValue(w.value, w.currency)}</span>}
+              </div>
+              <div className="history-service" style={{marginTop:4}}>
+                <span className="badge badge-trabalho">{w.type || '—'}</span>
+                <span className={badgeClass(w.status)} style={{marginLeft:6}}>{w.status}</span>
+                {w.createdBy && <span className="badge badge-user" style={{marginLeft:6}}>{w.createdBy}</span>}
+              </div>
+              {w.description && <div className="history-obs">{w.description}</div>}
+            </div>
+          ))
+      )}
+
+      {activeTab === 'dividas' && (
+        clientDebts.length === 0
+          ? <p style={{color:'var(--text-dim)',fontStyle:'italic',fontSize:14}}>Nenhuma dívida registrada</p>
+          : clientDebts.map(d => {
+            const remaining = getRemaining(d.total, d.paid);
+            return (
+              <div key={d.id} className="history-item">
+                <div style={{display:'flex',alignItems:'center',justifyContent:'space-between'}}>
+                  <div className="history-date">Venc. {formatDate(d.dueDate)}</div>
+                  <div style={{display:'flex',gap:10,fontFamily:'DM Mono,monospace',fontSize:12}}>
+                    <span style={{color:'var(--text-dim)'}}>Total: {formatValue(d.total, d.currency)}</span>
+                    <span style={{color:'#7ec49a'}}>Pago: {formatValue(d.paid||0, d.currency)}</span>
+                    {remaining > 0 && <span style={{color:'#e08888'}}>Falta: {formatValue(remaining, d.currency)}</span>}
+                  </div>
+                </div>
+                <div style={{marginTop:4}}>
+                  <span className={d.status==='Quitada' ? 'badge badge-concluido' : d.status==='Parcial' ? 'badge badge-confirmado' : 'badge badge-pendente'}>{d.status}</span>
+                  <span style={{marginLeft:8,fontSize:14,color:'var(--text-muted)'}}>{d.description}</span>
+                </div>
+              </div>
+            );
+          })
+      )}
+    </>
+  );
+}
+
+// ── CLIENTS ──────────────────────────────────────────────
+function Clients({ clients, setClients, appointments, works, debts, notify, currentUser }) {
+  const [search, setSearch] = useState('');
+  const [clientTab, setClientTab] = useState('ativos');
+  const [showModal, setShowModal] = useState(false);
+  const [showDetail, setShowDetail] = useState(null);
+  const [editing, setEditing] = useState(null);
+  const [lightbox, setLightbox] = useState(null);
+  const [form, setForm] = useState({ name:'', nickname:'', phone:'', country:'Brasil', birthdate:'', notes:'', photos:[] });
+  const [confirmDel, setConfirmDel] = useState(null);
+  const [dupWarning, setDupWarning] = useState(false);
+  const fileRef = useRef();
+
+  const activeClients   = clients.filter(c => !c.inactive);
+  const inactiveClients = clients.filter(c => !!c.inactive);
+  const baseList = clientTab === 'ativos' ? activeClients : inactiveClients;
+
+  const filtered = baseList.filter(c =>
+    c.name.toLowerCase().includes(search.toLowerCase()) ||
+    (c.nickname && c.nickname.toLowerCase().includes(search.toLowerCase())) ||
+    (c.phone && c.phone.includes(search))
+  );
+
+  function getLastActivity(clientId) {
+    const apts = appointments.filter(a => a.clientId === clientId && a.status !== 'Cancelado');
+    const wrks = works.filter(w => w.clientId === clientId && w.status !== 'Cancelado');
+    const dates = [...apts.map(a => a.date), ...wrks.map(w => w.startDate)].filter(Boolean).sort().reverse();
+    return dates[0] || null;
+  }
+
+  function openNew() {
+    setEditing(null);
+    setDupWarning(false);
+    setForm({ name:'', nickname:'', phone:'', country:'Brasil', birthdate:'', notes:'', photos:[] });
+    setShowModal(true);
+  }
+
+  function openEdit(c) {
+    setEditing(c.id);
+    setForm({ name:c.name, nickname:c.nickname||'', phone:c.phone||'', country:c.country||'Brasil', birthdate:c.birthdate||'', notes:c.notes||'', photos:c.photos||[] });
+    setShowModal(true);
+  }
+
+  function handlePhotoUpload(e) {
+    const files = Array.from(e.target.files);
+    files.forEach(file => {
+      const reader = new FileReader();
+      reader.onload = ev => {
+        setForm(f => ({ ...f, photos: [...(f.photos||[]), ev.target.result].slice(0, 3) }));
+      };
+      reader.readAsDataURL(file);
+    });
+  }
+
+  function removePhoto(idx) {
+    setForm(f => ({ ...f, photos: f.photos.filter((_, i) => i !== idx) }));
+  }
+
+  function save(force = false) {
+    if (!form.name.trim()) return;
+    if (editing) {
+      const updated = clients.map(c => c.id === editing ? { ...c, ...form } : c);
+      setClients(updated); saveData('clients', updated); notify('Cliente atualizado');
+      setShowModal(false);
+    } else {
+      // Check for duplicate name (or nickname) ignoring case
+      if (!force) {
+        const nameLow = form.name.trim().toLowerCase();
+        const nickLow = form.nickname.trim().toLowerCase();
+        const isDup = clients.some(c => {
+          const cName = c.name.toLowerCase();
+          const cNick = (c.nickname || '').toLowerCase();
+          return cName === nameLow || (nickLow && nickLow.length > 2 && cNick === nickLow);
+        });
+        if (isDup) { setDupWarning(true); return; }
+      }
+      setDupWarning(false);
+      const newC = { id: newId(), createdAt: today(), ...form };
+      const updated = [...clients, newC];
+      setClients(updated); saveData('clients', updated); notify('Cliente cadastrado');
+      setShowModal(false);
+    }
+  }
+
+  function deleteClient(id) {
+    setConfirmDel({ id, type: 'client' });
+  }
+  function confirmDeleteClient() {
+    const updated = clients.filter(c => c.id !== confirmDel.id);
+    setClients(updated); saveData('clients', updated); notify('Cliente removido');
+    setConfirmDel(null);
+  }
+
+  function toggleInactive(id) {
+    const updated = clients.map(c => c.id === id ? { ...c, inactive: !c.inactive } : c);
+    setClients(updated); saveData('clients', updated);
+    const cl = clients.find(c => c.id === id);
+    notify(cl.inactive ? 'Cliente reativado' : 'Cliente marcado como inativo');
+  }
+
+  function copyClient(c) {
+    const txt = `${c.name}${c.phone ? '\n' + c.phone : ''}`;
+    navigator.clipboard.writeText(txt).then(() => notify('Dados copiados!'));
+  }
+
+  const clientApts  = showDetail ? sortByDate(appointments.filter(a => a.clientId === showDetail.id), 'date', 'desc') : [];
+  const clientWrks  = showDetail ? sortByDate(works.filter(w => w.clientId === showDetail.id), 'startDate', 'desc') : [];
+  const clientDebts = showDetail ? sortByDate((debts||[]).filter(d => d.clientId === showDetail.id && d.status !== 'Quitada'), 'dueDate', 'desc') : [];
+
+  const { sorted: sortedClients, thProps, sortKey: clientSortKey } = useSortable(filtered, 'name');
+  const { paged, page, setPage, totalPages } = usePagination(sortedClients, PAGE_SIZE, clientSortKey);
+
+  return (
+    <div>
+      {lightbox && <Lightbox src={lightbox} onClose={() => setLightbox(null)} />}
+      {confirmDel && (
+        <ConfirmModal
+          icon="✕" title="Remover cliente?"
+          desc="Esta ação não poderá ser desfeita."
+          onConfirm={confirmDeleteClient}
+          onCancel={() => setConfirmDel(null)}
+        />
+      )}
+
+      <div className="page-header">
+        <h2>Clientes</h2>
+        <p>{activeClients.length} ativos · {inactiveClients.length} inativos</p>
+      </div>
+
+      <div className="table-container">
+        <div className="table-header">
+          <div style={{display:'flex',gap:0,borderBottom:'none'}}>
+            {[{id:'ativos',label:`Ativos (${activeClients.length})`},{id:'inativos',label:`Inativos (${inactiveClients.length})`}].map(t => (
+              <button key={t.id} onClick={() => { setClientTab(t.id); setSearch(''); }} style={{
+                background:'none', border:'none', borderBottom: clientTab===t.id ? '2px solid var(--purple-light)' : '2px solid transparent',
+                color: clientTab===t.id ? 'var(--purple-light)' : 'var(--text-dim)',
+                fontFamily:'DM Mono,monospace', fontSize:11, letterSpacing:'0.12em', textTransform:'uppercase',
+                padding:'6px 16px', cursor:'pointer', transition:'all 0.2s'
+              }}>{t.label}</button>
+            ))}
+          </div>
+          <button className="btn btn-primary" onClick={openNew}>+ Novo Cliente</button>
+        </div>
+        <div className="search-bar">
+          <input className="search-input" placeholder="Buscar por nome, apelido ou telefone..." value={search} onChange={e => setSearch(e.target.value)} />
+        </div>
+
+        {paged.length === 0
+          ? <div className="empty-state"><div className="empty-icon">✦</div><p>Nenhum cliente encontrado</p></div>
+          : <>
+            <table>
+              <thead><tr>
+                <th {...thProps('name')}>Nome</th>
+                <th>Telefone</th>
+                <th {...thProps('country')}>País</th>
+                <th>Signo</th>
+                <th>Atend.</th>
+                <th>Última Ativ.</th>
+                <th>Obs.</th>
+                <th {...thProps('createdAt')}>Cadastro</th>
+                <th></th>
+              </tr></thead>
+              <tbody>
+                {paged.map(c => {
+                  const count = appointments.filter(a => a.clientId === c.id).length;
+                  const zodiac = getZodiac(c.birthdate);
+                  const lastAct = getLastActivity(c.id);
+                  const openDebts = (debts||[]).filter(d => d.clientId === c.id && d.status !== 'Quitada');
+                  const hasDebt = openDebts.length > 0;
+                  const debtTotal = openDebts.reduce((s, d) => s + parseMoney(getRemaining(d.total, d.paid)), 0);
+                  const today_ = today();
+                  const isRecent = lastAct && lastAct >= today_.slice(0,7); // this month
+                  return (
+                    <tr key={c.id} className={c.inactive ? 'client-inactive' : ''}>
+                      <td style={{cursor:'pointer'}} onClick={() => setShowDetail(c)}>
+                        <div style={{display:'flex',alignItems:'center',gap:8}}>
+                          <span style={{borderBottom:'1px dotted var(--purple-light)'}}>{c.nickname || c.name}</span>
+                          {c.inactive && <span className="badge-inactive">inativo</span>}
+                        </div>
+                      </td>
+                      <td>
+                        {c.phone
+                          ? <a href={`https://wa.me/${c.phone.replace(/\D/g,'')}`} target="_blank" rel="noreferrer" style={{color:'#7ec49a',textDecoration:'none'}} title="Abrir WhatsApp">📱 {c.phone}</a>
+                          : '—'}
+                      </td>
+                      <td>{c.country || '—'}</td>
+                      <td style={{fontSize:14,color:'var(--text-muted)'}}>{zodiac || '—'}</td>
+                      <td>
+                        <div style={{display:'flex',alignItems:'center',gap:6}}>
+                          <span style={{fontFamily:'DM Mono,monospace',fontSize:14,color:count > 1 ? 'var(--gold)' : 'var(--text-muted)'}}>
+                            {count} {count > 1 ? '⭐' : ''}
+                          </span>
+                          {hasDebt && (
+                            <span title={`Dívida: R$ ${formatMoney(debtTotal)}`} style={{
+                              fontSize:10, fontFamily:'DM Mono,monospace',
+                              background:'rgba(224,136,136,0.15)', color:'#e08888',
+                              border:'1px solid rgba(224,136,136,0.3)',
+                              padding:'1px 6px', letterSpacing:'0.05em'
+                            }}>
+                              ◉ dívida
+                            </span>
+                          )}
+                        </div>
+                      </td>
+                      <td style={{fontFamily:'DM Mono,monospace',fontSize:13,color: isRecent ? '#7ec49a' : 'var(--text-muted)'}}>
+                        {lastAct ? formatDate(lastAct) : <span style={{color:'var(--text-dim)'}}>—</span>}
+                      </td>
+                      <td style={{maxWidth:160}}>
+                        {c.notes
+                          ? <div style={{fontSize:13,color:'var(--text-muted)',fontStyle:'italic',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap',maxWidth:150}} title={c.notes}>{c.notes}</div>
+                          : <span style={{color:'var(--text-dim)'}}>—</span>
+                        }
+                      </td>
+                      <td style={{fontFamily:'DM Mono,monospace',fontSize:13}}>{formatDate(c.createdAt)}</td>
+                      <td>
+                        <div style={{display:'flex',gap:6}}>
+                          <button className="btn btn-ghost btn-sm" title="Copiar nome e telefone" onClick={() => copyClient(c)}>⎘</button>
+                          <button className="btn btn-ghost btn-sm" onClick={() => openEdit(c)}>Editar</button>
+                          <button className="btn btn-ghost btn-sm" title={c.inactive ? 'Reativar' : 'Marcar inativo'} onClick={() => toggleInactive(c.id)} style={{color: c.inactive ? '#7ec49a' : 'var(--text-dim)'}}>
+                            {c.inactive ? '✓' : '○'}
+                          </button>
+                          <button className="btn btn-danger" onClick={() => deleteClient(c.id)}>✕</button>
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+            <Pagination page={page} totalPages={totalPages} setPage={setPage} total={filtered.length} />
+          </>
+        }
+      </div>
+
+      {showModal && (
+        <Modal
+          title={editing ? 'Editar Cliente' : 'Novo Cliente'}
+          onClose={() => { setShowModal(false); setDupWarning(false); }}
+          footer={<>
+            <button className="btn btn-ghost" onClick={() => { setShowModal(false); setDupWarning(false); }}>Cancelar</button>
+            <button className="btn btn-primary" onClick={() => save()}>Salvar</button>
+          </>}
+        >
+          {(() => {
+            const q = (form.name || '').trim().toLowerCase();
+            const liveMatches = q.length >= 2 && !editing
+              ? clients.filter(c => {
+                  const n = c.name.toLowerCase();
+                  const k = (c.nickname || '').toLowerCase();
+                  return n.includes(q) || k.includes(q) || q.includes(n) || (k && q.includes(k));
+                }).slice(0, 4)
+              : [];
+            return (
+              <div className="form-group">
+                <label className="form-label">Nome Completo *</label>
+                <input
+                  className={"form-input" + (liveMatches.length ? " input-warning" : "")}
+                  value={form.name}
+                  onChange={e => { setForm({...form, name:e.target.value}); setDupWarning(false); }}
+                  placeholder="Nome da cliente"
+                />
+                {liveMatches.length > 0 && (
+                  <div className="dup-suggestion">
+                    <div className="dup-suggestion-header">Clientes com nome parecido</div>
+                    {liveMatches.map(c => (
+                      <div key={c.id} className="dup-suggestion-item" onClick={() => { setShowModal(false); setDupWarning(false); setShowDetail(c); }}>
+                        <div>
+                          <div className="dup-suggestion-name">{c.nickname || c.name}</div>
+                          {c.nickname && <div className="dup-suggestion-meta">{c.name}</div>}
+                          {c.phone && <div className="dup-suggestion-meta">{c.phone}</div>}
+                        </div>
+                        <span className="dup-suggestion-badge">ver ficha</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+                {dupWarning && (
+                  <div style={{marginTop:6,background:'rgba(192,64,74,0.1)',border:'1px solid rgba(192,64,74,0.4)',padding:'9px 14px',fontSize:13,color:'#e07080',display:'flex',alignItems:'center',justifyContent:'space-between',gap:10}}>
+                    <span>Nome exato já cadastrado. Confirma assim mesmo?</span>
+                    <button className="btn btn-ghost btn-sm" onClick={() => save(true)} style={{whiteSpace:'nowrap',color:'#e07080'}}>Confirmar</button>
+                  </div>
+                )}
+              </div>
+            );
+          })()}
+          <div className="form-group">
+            <label className="form-label">Apelido / Nome Espiritual</label>
+            <input className="form-input" value={form.nickname} onChange={e => { setForm({...form, nickname:e.target.value}); setDupWarning(false); }} placeholder="Como prefere ser chamada, nome espiritual..." />
+          </div>
+          <div className="form-row">
+            <div className="form-group">
+              <label className="form-label">Telefone / WhatsApp</label>
+              <input className="form-input" value={form.phone} onChange={e => setForm({...form, phone:e.target.value})} placeholder="+55 11 99999-9999" />
+            </div>
+            <div className="form-group">
+              <label className="form-label">País</label>
+              <select className="form-input" value={form.country} onChange={e => setForm({...form, country:e.target.value})}>
+                {COUNTRIES.map(c => <option key={c}>{c}</option>)}
+              </select>
+            </div>
+          </div>
+          <div className="form-group">
+            <label className="form-label">Data de Nascimento</label>
+            <input type="date" className="form-input" value={form.birthdate} onChange={e => setForm({...form, birthdate:e.target.value})} />
+            {form.birthdate && <div style={{marginTop:6,fontSize:13,color:'var(--text-dim)',fontStyle:'italic'}}>Signo: {getZodiac(form.birthdate) || '—'}</div>}
+          </div>
+          <div className="form-group">
+            <label className="form-label">Fotos (máx. 3)</label>
+            <div className="photo-grid">
+              {(form.photos||[]).map((src, i) => (
+                <div key={i} style={{position:'relative'}}>
+                  <img src={src} className="photo-thumb" onClick={() => setLightbox(src)} alt="" />
+                  <button onClick={() => removePhoto(i)} style={{position:'absolute',top:2,right:2,background:'rgba(0,0,0,0.7)',border:'none',color:'white',cursor:'pointer',fontSize:12,padding:'2px 5px'}}>✕</button>
+                </div>
+              ))}
+              {(form.photos||[]).length < 3 && (
+                <div className="photo-upload-btn" onClick={() => fileRef.current.click()}>
+                  <span>+</span>
+                  <span className="photo-upload-label">Foto</span>
+                </div>
+              )}
+            </div>
+            <input ref={fileRef} type="file" accept="image/*" style={{display:'none'}} onChange={handlePhotoUpload} />
+          </div>
+          <div className="form-group">
+            <label className="form-label">Observações</label>
+            <textarea className="form-input" value={form.notes} onChange={e => setForm({...form, notes:e.target.value})} placeholder="Situação, histórico, detalhes importantes..." />
+          </div>
+        </Modal>
+      )}
+
+      {showDetail && (
+        <Modal title="Ficha do Cliente" onClose={() => setShowDetail(null)} wide>
+          <div className="detail-grid">
+            <div>
+              <div className="detail-item-label">Nome</div>
+              <div className="detail-item-value">
+                {showDetail.name}
+                {showDetail.nickname && <span style={{marginLeft:8,fontSize:14,color:'var(--text-dim)',fontStyle:'italic'}}>({showDetail.nickname})</span>}
+              </div>
+            </div>
+            <div><div className="detail-item-label">Telefone</div>
+              <div className="detail-item-value">
+                {showDetail.phone
+                  ? <a href={`https://wa.me/${showDetail.phone.replace(/\D/g,'')}`} target="_blank" rel="noreferrer" style={{color:'#7ec49a',textDecoration:'none'}}>📱 {showDetail.phone}</a>
+                  : '—'}
+              </div>
+            </div>
+            <div><div className="detail-item-label">País</div><div className="detail-item-value">{showDetail.country || '—'}</div></div>
+            <div><div className="detail-item-label">Nascimento</div><div className="detail-item-value">{formatDate(showDetail.birthdate)}</div></div>
+            <div><div className="detail-item-label">Signo</div><div className="detail-item-value">{getZodiac(showDetail.birthdate) || '—'}</div></div>
+            <div style={{gridColumn:'1/-1'}}><div className="detail-item-label">Observações</div><div className="detail-item-value" style={{fontStyle:'italic',color:'var(--text-muted)'}}>{showDetail.notes || '—'}</div></div>
+          </div>
+
+          {(showDetail.photos||[]).length > 0 && (
+            <>
+              <div className="divider-line"/>
+              <div style={{marginBottom:12,fontFamily:'DM Mono,monospace',fontSize:10,letterSpacing:'0.2em',textTransform:'uppercase',color:'var(--text-dim)'}}>Fotos</div>
+              <div className="photo-grid">
+                {showDetail.photos.map((src, i) => (
+                  <img key={i} src={src} className="photo-thumb" onClick={() => setLightbox(src)} alt="" />
+                ))}
+              </div>
+            </>
+          )}
+
+          <div className="divider-line"/>
+          <ClientHistoryTabs clientApts={clientApts} clientWrks={clientWrks} clientDebts={clientDebts} />
+        </Modal>
+      )}
+
+    </div>
+  );
+}
+
+// ── APPOINTMENTS ─────────────────────────────────────────
+function Appointments({ clients, appointments, setAppointments, debts, setDebts, notify, currentUser }) {
+  const [view, setView] = useState('lista');
+  const [search, setSearch] = useState('');
+  const [filterService, setFilterService] = useState('');
+  const [filterStatus, setFilterStatus] = useState('');
+  const [filterFrom, setFilterFrom] = useState('');
+  const [filterTo, setFilterTo] = useState('');
+  const [showModal, setShowModal] = useState(false);
+  const [editing, setEditing] = useState(null);
+  const [showDetail, setShowDetail] = useState(null);
+  const [savedConfirmQueue, setSavedConfirmQueue] = useState([]);
+  const [confirmDel, setConfirmDel] = useState(null);
+  // Show queue items one at a time, auto-dismiss after 5s
+  useEffect(() => {
+    if (savedConfirmQueue.length === 0) return;
+    const t = setTimeout(() => setSavedConfirmQueue(q => q.slice(1)), 5000);
+    return () => clearTimeout(t);
+  }, [savedConfirmQueue]);
+  const savedConfirm = savedConfirmQueue[0] || null;
+  const [form, setForm] = useState({ clientId:'', clientName:'', date:today(), time:'', service:SERVICES[0], status:'Pendente', value:'', currency:'BRL', notes:'', pagamento:'na_hora', valorPago:'', vencimento:'' });
+
+  const filtered = appointments.filter(a => {
+    const cl = clients.find(c => c.id === a.clientId);
+    const name = cl ? cl.name : a.clientName || '';
+    const matchSearch = name.toLowerCase().includes(search.toLowerCase()) || a.service.toLowerCase().includes(search.toLowerCase());
+    const matchService = !filterService || a.service === filterService;
+    const matchStatus = !filterStatus || a.status === filterStatus;
+    const matchFrom = !filterFrom || (a.date && a.date >= filterFrom);
+    const matchTo = !filterTo || (a.date && a.date <= filterTo);
+    return matchSearch && matchService && matchStatus && matchFrom && matchTo;
+  });
+
+  const { sorted, thProps: aptThProps, sortKey: aptSortKey } = useSortable(filtered, 'date', 'desc');
+  const { paged, page, setPage, totalPages } = usePagination(sorted, PAGE_SIZE, aptSortKey);
+
+  const agendaDates = [...new Set(sorted.map(a => a.date))].sort((a,b) => new Date(a) - new Date(b));
+
+  function openNew() {
+    setEditing(null);
+    setForm({ clientId:'', clientName:'', date:today(), time:'', service:SERVICES[0], status:'Pendente', value:'', currency:'BRL', notes:'', pagamento:'na_hora', valorPago:'', vencimento:'' });
+    setShowModal(true);
+  }
+
+  function openEdit(a) {
+    setEditing(a.id);
+    setForm({ clientId:a.clientId||'', clientName:a.clientName||'', date:a.date||today(), time:a.time||'', service:a.service||SERVICES[0], status:a.status||'Pendente', value:a.value||'', currency:a.currency||'BRL', notes:a.notes||'', pagamento:a.pagamento||'na_hora', valorPago:a.valorPago||'', vencimento:a.vencimento||'' });
+    setShowModal(true);
+  }
+
+  function save() {
+    if (!form.date || !form.service) return;
+    const cl = clients.find(c => c.id === form.clientId);
+    const entry = { ...form, clientName: cl ? clientName(cl) : form.clientName, createdBy: currentUser };
+    const aptId = editing || newId();
+
+    if (editing) {
+      const updated = appointments.map(a => a.id === editing ? { ...a, ...entry } : a);
+      setAppointments(updated); saveData('appointments', updated); notify('Atendimento atualizado');
+    } else {
+      const updated = [...appointments, { id: aptId, ...entry }];
+      setAppointments(updated); saveData('appointments', updated);
+
+      const total = parseMoney(form.value);
+      const pago = parseMoney(form.valorPago);
+      const restante = form.pagamento === 'depois' ? total : (form.pagamento === 'parcial' ? total - pago : 0);
+
+      if (restante > 0 && total > 0) {
+        const debtClientName = cl ? clientName(cl) : form.clientName;
+        const newDebt = {
+          id: newId(), clientId: form.clientId || '', clientName: debtClientName,
+          description: `${form.service} — agendamento de ${formatDate(form.date)}`,
+          total: String(total), paid: String(form.pagamento === 'parcial' ? pago : 0),
+          currency: form.currency, dueDate: form.vencimento || '',
+          status: form.pagamento === 'parcial' ? 'Parcial' : 'Aberta', createdAt: today(),
+          sourceId: aptId, sourceType: 'appointment',
+        };
+        const updatedDebts = [...(debts||[]), newDebt];
+        setDebts(updatedDebts); saveData('debts', updatedDebts);
+        notify('Agendamento salvo · Dívida criada automaticamente ✦');
+      } else {
+        notify('Atendimento agendado');
+      }
+
+      setSavedConfirmQueue(q => [...q, {
+        clientName: cl ? cl.name : form.clientName || '—',
+        service: form.service, date: form.date, time: form.time,
+        value: form.value, currency: form.currency, pagamento: form.pagamento,
+        hasDebt: restante > 0 && total > 0,
+        key: newId(),
+      }]);
+    }
+    setShowModal(false);
+  }
+
+  function deleteApt(id) {
+    setConfirmDel(id);
+  }
+  function confirmDeleteApt() {
+    const updated = appointments.filter(a => a.id !== confirmDel);
+    setAppointments(updated); saveData('appointments', updated); notify('Agendamento removido');
+    setConfirmDel(null);
+  }
+
+  function duplicateApt(a) {
+    setEditing(null);
+    setForm({ clientId:a.clientId||'', clientName:a.clientName||'', date:today(), time:a.time||'', service:a.service||SERVICES[0], status:'Pendente', value:a.value||'', currency:a.currency||'BRL', notes:a.notes||'', pagamento:'na_hora', valorPago:'', vencimento:'' });
+    setShowModal(true);
+  }
+
+  function quickStatus(id, status) {
+    const updated = appointments.map(a => a.id === id ? { ...a, status } : a);
+    setAppointments(updated); saveData('appointments', updated);
+  }
+
+  // Groups via shared utility getDateGroups(items, 'date')
+
+  return (
+    <div>
+      {confirmDel && (
+        <ConfirmModal
+          icon="🌙" title="Remover agendamento?"
+          desc="Esta ação não poderá ser desfeita."
+          onConfirm={confirmDeleteApt}
+          onCancel={() => setConfirmDel(null)}
+        />
+      )}
+      <div className="page-header">
+        <h2>Agendamentos</h2>
+        <p>{appointments.filter(a => a.status !== 'Cancelado').length} atendimentos ativos</p>
+      </div>
+
+      <div className="table-container">
+        <div className="table-header">
+          <div className="tabs" style={{border:'none',marginBottom:0}}>
+            <button className={`tab${view==='lista'?' active':''}`} onClick={() => setView('lista')}>Lista</button>
+            <button className={`tab${view==='agenda'?' active':''}`} onClick={() => setView('agenda')}>Agenda</button>
+          </div>
+          <button className="btn btn-primary" onClick={openNew}>+ Novo Agendamento</button>
+        </div>
+
+        <div className="search-bar">
+          <input className="search-input" placeholder="Buscar cliente ou serviço..." value={search} onChange={e => setSearch(e.target.value)} />
+          <select className="search-input" style={{maxWidth:200}} value={filterService} onChange={e => setFilterService(e.target.value)}>
+            <option value="">Todos os serviços</option>
+            {SERVICES.map(s => <option key={s}>{s}</option>)}
+          </select>
+          <select className="search-input" style={{maxWidth:150}} value={filterStatus} onChange={e => setFilterStatus(e.target.value)}>
+            <option value="">Todos os status</option>
+            {STATUS.map(s => <option key={s}>{s}</option>)}
+          </select>
+        </div>
+
+        <div className="search-bar" style={{paddingTop:0}}>
+          <div style={{display:'flex',alignItems:'center',gap:8,flex:1}}>
+            <span style={{fontFamily:'DM Mono,monospace',fontSize:11,color:'var(--text-dim)',letterSpacing:'0.1em',whiteSpace:'nowrap'}}>DE</span>
+            <input type="date" className="search-input" style={{flex:1}} value={filterFrom} onChange={e => setFilterFrom(e.target.value)} />
+          </div>
+          <div style={{display:'flex',alignItems:'center',gap:8,flex:1}}>
+            <span style={{fontFamily:'DM Mono,monospace',fontSize:11,color:'var(--text-dim)',letterSpacing:'0.1em',whiteSpace:'nowrap'}}>ATÉ</span>
+            <input type="date" className="search-input" style={{flex:1}} value={filterTo} onChange={e => setFilterTo(e.target.value)} />
+          </div>
+          {(filterFrom||filterTo) && <button className="btn btn-ghost btn-sm" onClick={() => { setFilterFrom(''); setFilterTo(''); }}>Limpar</button>}
+        </div>
+
+        {view === 'lista' ? (
+          sorted.length === 0
+            ? <div className="empty-state"><div className="empty-icon">🌙</div><p>Nenhum agendamento encontrado</p></div>
+            : <>
+                {getDateGroups(paged, 'date').map(grp => grp.items.length === 0 ? null : (
+                  <React.Fragment key={grp.key}>
+                    <div style={{padding:'10px 16px 4px',fontFamily:'DM Mono,monospace',fontSize:9,letterSpacing:'0.2em',textTransform:'uppercase',color:grp.color,background:'rgba(0,0,0,0.2)',borderBottom:'1px solid rgba(128,128,128,0.15)'}}>
+                      {grp.label} · {grp.items.length} agendamento{grp.items.length !== 1 ? 's' : ''}
+                    </div>
+                    <table>
+                      <thead><tr>
+                        <th {...aptThProps('clientName')}>Cliente</th>
+                        <th {...aptThProps('service')}>Serviço</th>
+                        <th {...aptThProps('date')}>Data</th>
+                        <th>Horário</th>
+                        <th>Valor / Pgto</th>
+                        <th>Observação</th>
+                        <th {...aptThProps('status')}>Status</th>
+                        <th>Por</th>
+                        <th></th>
+                      </tr></thead>
+                      <tbody>
+                        {grp.items.map(a => {
+                          const cl = clients.find(c => c.id === a.clientId);
+                          const overdueApt = isOverdue(a);
+                          const total = parseMoney(a.value);
+                          const pago = parseMoney(a.valorPago);
+                          const isParcial = a.pagamento === 'parcial' && total > 0;
+                          const payLabel = a.pagamento === 'depois'
+                            ? { icon:'📅', label:'Paga depois', color:'#e08888' }
+                            : a.pagamento === 'parcial'
+                              ? { icon:'⚖', label:'Parcial', color:'var(--gold)' }
+                              : null;
+                          const debtQuitada = a.pagamento === 'depois' && (debts||[]).some(d =>
+                            d.clientId === a.clientId && d.status === 'Quitada' &&
+                            d.description && d.description.includes(formatDate(a.date))
+                          );
+                          const showPayLabel = payLabel && !debtQuitada;
+                          return (
+                            <tr key={a.id}>
+                              <td>
+                                {cl
+                                  ? <span style={{cursor:'pointer',borderBottom:'1px dotted var(--purple-light)'}} onClick={() => setShowDetail(cl)}>{clientName(cl)}</span>
+                                  : (a.clientName || '—')
+                                }
+                              </td>
+                              <td><span className={badgeClass(a.service)}>{a.service}</span></td>
+                              <td style={{fontFamily:'DM Mono,monospace',fontSize:14}}>{formatDate(a.date)}</td>
+                              <td style={{fontFamily:'DM Mono,monospace',fontSize:14}}>{a.time || '—'}</td>
+                              <td>
+                                {a.value ? (
+                                  <div style={{display:'flex',flexDirection:'column',gap:4}}>
+                                    <span style={{fontFamily:'DM Mono,monospace',fontSize:14,color:a.currency==='EUR'?'#a8d8c8':'var(--gold)'}}>
+                                      {formatValue(a.value, a.currency)}
+                                    </span>
+                                    {isParcial && (
+                                      <div style={{display:'flex',flexDirection:'column',gap:2}}>
+                                        <span style={{fontSize:11,color:'var(--text-dim)',fontFamily:'DM Mono,monospace'}}>
+                                          pago <span style={{color:'#7ec8a0'}}>{formatValue(String(pago),a.currency)}</span>
+                                        </span>
+                                        <span style={{fontSize:11,color:'#e0a870',fontFamily:'DM Mono,monospace'}}>
+                                          restam {formatValue(String(Math.max(0,total-pago)),a.currency)}
+                                        </span>
+                                      </div>
+                                    )}
+                                    {showPayLabel && !isParcial && (
+                                      <span style={{fontSize:11,color:payLabel.color,fontFamily:'DM Mono,monospace'}}>{payLabel.icon} {payLabel.label}</span>
+                                    )}
+                                    {debtQuitada && (
+                                      <span style={{fontSize:11,color:'#7ec8a0',fontFamily:'DM Mono,monospace'}}>✓ quitado</span>
+                                    )}
+                                  </div>
+                                ) : <span style={{color:'var(--text-dim)'}}>—</span>}
+                              </td>
+                              <td><div className="obs-cell">{a.notes || '—'}</div></td>
+                              <td>
+                                <div style={{display:'flex',flexDirection:'column',gap:3}}>
+                                  <select value={a.status} onChange={e => quickStatus(a.id, e.target.value)}
+                                    style={{background:'transparent',border:'none',cursor:'pointer',fontSize:13,fontFamily:'DM Mono,monospace',letterSpacing:'0.1em',
+                                      color:a.status==='Concluído'?'#7ec49a':a.status==='Cancelado'?'#e08888':'var(--gold)'}}>
+                                    {STATUS.map(s => <option key={s} style={{background:'#15101f'}}>{s}</option>)}
+                                  </select>
+                                  {overdueApt && <span className="badge badge-atrasado">Atrasado</span>}
+                                </div>
+                              </td>
+                              <td><span className="badge badge-user">{a.createdBy || '—'}</span></td>
+                              <td>
+                                <div style={{display:'flex',gap:6}}>
+                                  <button className="btn btn-ghost btn-sm" onClick={() => openEdit(a)}>Editar</button>
+                                  <button className="btn btn-ghost btn-sm" title="Duplicar" onClick={() => duplicateApt(a)}>⎘</button>
+                                  <button className="btn btn-danger" onClick={() => deleteApt(a.id)}>✕</button>
+                                </div>
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  </React.Fragment>
+                ))}
+                <Pagination page={page} totalPages={totalPages} setPage={setPage} total={sorted.length} />
+              </>
+        ) : (
+          <div style={{padding:'16px 24px'}}>
+            {agendaDates.length === 0
+              ? <div className="empty-state"><div className="empty-icon">🌙</div><p>Nenhum agendamento</p></div>
+              : agendaDates.map(date => {
+                  const isToday = date === today();
+                  return (
+                    <div key={date} className="agenda-day">
+                      <div className={`agenda-day-header${isToday ? ' today-header' : ''}`}>
+                        {formatDate(date)}{isToday ? ' — Hoje' : ''}
+                      </div>
+                      {sorted.filter(a => a.date === date).sort((a,b) => (a.time||'') > (b.time||'') ? 1 : -1).map(a => {
+                        const cl = clients.find(c => c.id === a.clientId);
+                        const overdueApt = isOverdue(a);
+                        return (
+                          <div key={a.id} className={`agenda-item${isToday?' today-item':''}`} onClick={() => openEdit(a)}>
+                            <div className="agenda-time">{a.time || '--:--'}</div>
+                            <div className="agenda-info" style={{flex:1}}>
+                              <h4>{cl ? clientName(cl) : a.clientName || '—'}</h4>
+                              <p>{a.service} {a.value && `· ${formatValue(a.value, a.currency)}`}</p>
+                              {a.notes && <div className="agenda-obs">{a.notes}</div>}
+                            </div>
+                            <div style={{display:'flex',flexDirection:'column',gap:4,alignItems:'flex-end',marginLeft:'auto'}}>
+                              <span className={badgeClass(a.status)}>{a.status}</span>
+                              {overdueApt && <span className="badge badge-atrasado">Atrasado</span>}
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  );
+                })
+            }
+          </div>
+        )}
+      </div>
+
+      {savedConfirm && (
+        <div style={{position:'fixed',bottom:24,right:24,zIndex:200,background:'var(--surface)',border:'1px solid var(--purple-light)',padding:'20px 24px',minWidth:300,maxWidth:380,boxShadow:'0 8px 32px rgba(0,0,0,0.5)'}}>
+          <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:12}}>
+            <span style={{fontFamily:'Cinzel,serif',fontSize:14,color:'var(--purple-light)',letterSpacing:'0.1em'}}>✦ Agendamento Salvo</span>
+            <button onClick={() => setSavedConfirmQueue(q => q.slice(1))} style={{background:'none',border:'none',color:'var(--text-dim)',cursor:'pointer',fontSize:16}}>✕</button>
+          </div>
+          <div style={{display:'grid',gridTemplateColumns:'auto 1fr',gap:'6px 12px',fontSize:14}}>
+            <span style={{color:'var(--text-dim)'}}>Cliente</span><span>{savedConfirm.clientName}</span>
+            <span style={{color:'var(--text-dim)'}}>Serviço</span><span>{savedConfirm.service}</span>
+            <span style={{color:'var(--text-dim)'}}>Data</span>
+            <span style={{fontFamily:'DM Mono,monospace',color:'var(--gold)'}}>
+              {formatDate(savedConfirm.date)}{savedConfirm.time ? (' às ' + savedConfirm.time) : ''}
+            </span>
+            {savedConfirm.value && (
+              <><span style={{color:'var(--text-dim)'}}>Valor</span>
+              <span style={{fontFamily:'DM Mono,monospace',color:savedConfirm.currency==='EUR'?'#a8d8c8':'var(--gold)'}}>{formatValue(savedConfirm.value, savedConfirm.currency)}</span></>
+            )}
+            {savedConfirm.hasDebt && (
+              <><span style={{color:'var(--text-dim)'}}>Dívida</span>
+              <span style={{color:'#e08888'}}>◉ Criada automaticamente</span></>
+            )}
+          </div>
+        </div>
+      )}
+
+      {showDetail && (
+        <Modal title="Ficha do Cliente" onClose={() => setShowDetail(null)} wide>
+          <div className="detail-grid">
+            <div><div className="detail-item-label">Nome</div><div className="detail-item-value">{showDetail.name}</div></div>
+            <div><div className="detail-item-label">Telefone</div><div className="detail-item-value">{showDetail.phone || '—'}</div></div>
+            <div><div className="detail-item-label">País</div><div className="detail-item-value">{showDetail.country || '—'}</div></div>
+            <div><div className="detail-item-label">Nascimento</div><div className="detail-item-value">{formatDate(showDetail.birthdate)}</div></div>
+            <div><div className="detail-item-label">Signo</div><div className="detail-item-value">{getZodiac(showDetail.birthdate) || '—'}</div></div>
+            <div style={{gridColumn:'1/-1'}}><div className="detail-item-label">Observações</div><div className="detail-item-value" style={{fontStyle:'italic',color:'var(--text-muted)'}}>{showDetail.notes || '—'}</div></div>
+          </div>
+          <div className="divider-line"/>
+          <ClientHistoryTabs
+            clientApts={sortByDate(appointments.filter(a => a.clientId === showDetail.id), 'date', 'desc')}
+            clientWrks={[]}
+            clientDebts={sortByDate((debts||[]).filter(d => d.clientId === showDetail.id && d.status !== 'Quitada'), 'dueDate', 'desc')}
+          />
+        </Modal>
+      )}
+
+      {showModal && (
+        <Modal title={editing ? 'Editar Atendimento' : 'Novo Agendamento'} onClose={() => setShowModal(false)} wide
+          footer={<><button className="btn btn-ghost" onClick={() => setShowModal(false)}>Cancelar</button><button className="btn btn-primary" onClick={save}>Salvar Agendamento</button></>}>
+          <div className="form-group">
+            <label className="form-label">Cliente</label>
+            <ClientSearchSelect
+              clients={clients}
+              value={form.clientId}
+              onChange={id => setForm({...form, clientId:id, clientName:''})}
+              clientName={clientName}
+            />
+            {!form.clientId && (
+              <input className="form-input" style={{marginTop:8}} value={form.clientName} onChange={e => setForm({...form, clientName:e.target.value})} placeholder="Ou digitar nome manualmente..." />
+            )}
+            {form.clientId && (() => {
+              const cl = clients.find(c => c.id === form.clientId);
+              if (!cl) return null;
+              const aptCount = appointments.filter(a => a.clientId === cl.id).length;
+              const openDebt = (debts||[]).filter(d => d.clientId === cl.id && d.status !== 'Quitada');
+              const debtTotal = openDebt.reduce((s, d) => s + parseMoney(getRemaining(d.total, d.paid)), 0);
+              return (
+                <div className="client-summary">
+                  <div className="client-summary-item">Atendimentos: <span>{aptCount}</span></div>
+                  {cl.phone && <div className="client-summary-item">Fone: <span>{cl.phone}</span></div>}
+                  {cl.country && <div className="client-summary-item">País: <span>{cl.country}</span></div>}
+                  {openDebt.length > 0 && <div className="client-summary-item client-summary-debt">⚠ Dívida em aberto: <span>{formatMoney(debtTotal)}</span></div>}
+                  {cl.notes && <div className="client-summary-item" style={{width:'100%',color:'var(--text-muted)',fontStyle:'italic'}}>{cl.notes}</div>}
+                </div>
+              );
+            })()}
+          </div>
+          <div className="form-row">
+            <div className="form-group">
+              <label className="form-label">Serviço *</label>
+              <select className="form-input" value={form.service} onChange={e => setForm({...form, service:e.target.value})}>
+                {SERVICES.map(s => <option key={s}>{s}</option>)}
+              </select>
+            </div>
+            <div className="form-group">
+              <label className="form-label">Status</label>
+              <select className="form-input" value={form.status} onChange={e => setForm({...form, status:e.target.value})}>
+                {STATUS.map(s => <option key={s}>{s}</option>)}
+              </select>
+            </div>
+          </div>
+          <div className="form-row">
+            <div className="form-group">
+              <label className="form-label">Data *</label>
+              <input type="date" className="form-input" value={form.date} onChange={e => setForm({...form, date:e.target.value})} />
+            </div>
+            <div className="form-group">
+              <label className="form-label">Horário</label>
+              <input type="time" className="form-input" value={form.time} onChange={e => setForm({...form, time:e.target.value})} />
+            </div>
+          </div>
+          <div className="form-group">
+            <label className="form-label">Valor</label>
+            <CurrencyField value={form.value} currency={form.currency} onValueChange={v => setForm({...form, value:v})} onCurrencyChange={c => setForm({...form, currency:c})} />
+          </div>
+          {!editing && (
+            <div className="form-group">
+              <label className="form-label">Pagamento</label>
+              <div style={{display:'flex',gap:8,flexWrap:'wrap'}}>
+                {[{v:'na_hora',l:'💰 Paga na hora'},{v:'parcial',l:'⚖ Parcial'},{v:'depois',l:'📅 Paga depois'}].map(opt => (
+                  <button key={opt.v} type="button" onClick={() => setForm({...form, pagamento:opt.v, valorPago:'', vencimento:''})}
+                    style={{padding:'8px 16px',border:'1px solid',borderColor:form.pagamento===opt.v?'var(--purple-light)':'var(--border)',background:form.pagamento===opt.v?'rgba(155,111,212,0.15)':'transparent',color:form.pagamento===opt.v?'var(--purple-light)':'var(--text-dim)',cursor:'pointer',fontSize:14,fontFamily:'Cormorant Garamond,serif',transition:'all 0.2s'}}>
+                    {opt.l}
+                  </button>
+                ))}
+              </div>
+              {form.pagamento === 'parcial' && (
+                <div className="form-row" style={{marginTop:10}}>
+                  <div className="form-group">
+                    <label className="form-label">Valor pago na hora</label>
+                    <input className="form-input" type="number" min="0" step="0.01" value={form.valorPago} onChange={e => setForm({...form, valorPago:e.target.value})} placeholder={`0,00 ${form.currency==='EUR'?'€':'R$'}`} />
+                  </div>
+                  <div className="form-group">
+                    <label className="form-label">Vencimento do restante</label>
+                    <input type="date" className="form-input" value={form.vencimento} onChange={e => setForm({...form, vencimento:e.target.value})} />
+                  </div>
+                </div>
+              )}
+              {form.pagamento === 'depois' && (
+                <div className="form-group" style={{marginTop:10}}>
+                  <label className="form-label">Data de vencimento</label>
+                  <input type="date" className="form-input" value={form.vencimento} onChange={e => setForm({...form, vencimento:e.target.value})} />
+                </div>
+              )}
+              {form.pagamento !== 'na_hora' && parseMoney(form.value) > 0 && (
+                <div style={{marginTop:8,padding:'8px 12px',background:'rgba(224,136,136,0.1)',border:'1px solid rgba(224,136,136,0.3)',fontSize:13,color:'#e08888',fontFamily:'DM Mono,monospace'}}>
+                  ◉ Dívida de {formatValue(form.pagamento==='parcial' ? String(parseMoney(form.value) - parseMoney(form.valorPago)) : form.value, form.currency)} será criada automaticamente
+                </div>
+              )}
+            </div>
+          )}
+          <div className="form-group">
+            <label className="form-label">Observações / Situação</label>
+            <textarea className="form-input" value={form.notes} onChange={e => setForm({...form, notes:e.target.value})} placeholder="Detalhes do caso, pedidos especiais, informações importantes..." />
+          </div>
+        </Modal>
+      )}
+    </div>
+  );
+}
+
+function Works({ clients, works, setWorks, debts, setDebts, notify, currentUser }) {
+  const [view, setView] = useState('lista');
+  const [showModal, setShowModal] = useState(false);
+  const [editing, setEditing] = useState(null);
+  const [search, setSearch] = useState('');
+  const [filterStatus, setFilterStatus] = useState('');
+  const [filterType, setFilterType] = useState('');
+  const [showDetail, setShowDetail] = useState(null);
+  const [savedConfirmQueue, setSavedConfirmQueue] = useState([]);
+  const [confirmDel, setConfirmDel] = useState(null);
+  useEffect(() => {
+    if (savedConfirmQueue.length === 0) return;
+    const t = setTimeout(() => setSavedConfirmQueue(q => q.slice(1)), 5000);
+    return () => clearTimeout(t);
+  }, [savedConfirmQueue]);
+  const savedConfirm = savedConfirmQueue[0] || null;
+  const [form, setForm] = useState({ clientId:'', clientName:'', type:'', startDate:today(), time:'', endDate:'', status:'Em andamento', value:'', currency:'BRL', description:'', result:'', pagamento:'na_hora', valorPago:'', vencimento:'' });
+
+  const filtered = works.filter(w => {
+    const cl = clients.find(c => c.id === w.clientId);
+    const name = cl ? (cl.nickname || cl.name) : w.clientName || '';
+    const matchSearch = name.toLowerCase().includes(search.toLowerCase()) || (w.type && w.type.toLowerCase().includes(search.toLowerCase()));
+    const matchStatus = !filterStatus || w.status === filterStatus;
+    const matchType = !filterType || w.type === filterType;
+    return matchSearch && matchStatus && matchType;
+  });
+
+  const { sorted, thProps: wrkThProps, sortKey: wrkSortKey } = useSortable(filtered, 'startDate', 'desc');
+  const { paged, page, setPage, totalPages } = usePagination(sorted, PAGE_SIZE, wrkSortKey);
+
+  const agendaDates = [...new Set(sorted.map(w => w.startDate))].sort((a,b) => new Date(a) - new Date(b));
+
+  function openNew() {
+    setEditing(null);
+    setForm({ clientId:'', clientName:'', type:'', startDate:today(), time:'', endDate:'', status:'Em andamento', value:'', currency:'BRL', description:'', result:'', pagamento:'na_hora', valorPago:'', vencimento:'' });
+    setShowModal(true);
+  }
+
+  function openEdit(w) {
+    setEditing(w.id);
+    setForm({ clientId:w.clientId||'', clientName:w.clientName||'', type:w.type||'', startDate:w.startDate||today(), time:w.time||'', endDate:w.endDate||'', status:w.status, value:w.value||'', currency:w.currency||'BRL', description:w.description||'', result:w.result||'', pagamento:w.pagamento||'na_hora', valorPago:w.valorPago||'', vencimento:w.vencimento||'' });
+    setShowModal(true);
+  }
+
+  function save() {
+    if (!form.startDate) return;
+    const cl = clients.find(c => c.id === form.clientId);
+    const entry = { ...form, clientName: cl ? clientName(cl) : form.clientName, createdBy: currentUser };
+    if (editing) {
+      const updated = works.map(w => w.id === editing ? { ...w, ...entry } : w);
+      setWorks(updated); saveData('works', updated); notify('Trabalho atualizado');
+    } else {
+      const wrkId = newId();
+      const updated = [...works, { id: wrkId, ...entry }];
+      setWorks(updated); saveData('works', updated);
+
+      const total = parseMoney(form.value);
+      const pago = parseMoney(form.valorPago);
+      const restante = form.pagamento === 'depois' ? total : (form.pagamento === 'parcial' ? total - pago : 0);
+
+      if (restante > 0 && total > 0) {
+        const debtClientName = cl ? clientName(cl) : form.clientName;
+        const newDebt = {
+          id: newId(), clientId: form.clientId || '', clientName: debtClientName,
+          description: `${form.type||'Trabalho'} — iniciado em ${formatDate(form.startDate)}`,
+          total: String(total), paid: String(form.pagamento === 'parcial' ? pago : 0),
+          currency: form.currency, dueDate: form.vencimento || '',
+          status: form.pagamento === 'parcial' ? 'Parcial' : 'Aberta', createdAt: today(),
+          sourceId: wrkId, sourceType: 'work',
+        };
+        const updatedDebts = [...(debts||[]), newDebt];
+        setDebts(updatedDebts); saveData('debts', updatedDebts);
+        notify('Trabalho salvo · Dívida criada automaticamente ✦');
+      } else {
+        notify('Trabalho registrado');
+      }
+
+      setSavedConfirmQueue(q => [...q, {
+        clientName: cl ? cl.name : form.clientName || '—',
+        type: form.type, date: form.startDate, time: form.time,
+        value: form.value, currency: form.currency,
+        hasDebt: restante > 0 && total > 0,
+        key: newId(),
+      }]);
+    }
+    setShowModal(false);
+  }
+
+  function deleteWork(id) {
+    setConfirmDel(id);
+  }
+  function confirmDeleteWork() {
+    const updated = works.filter(w => w.id !== confirmDel);
+    setWorks(updated); saveData('works', updated); notify('Trabalho removido');
+    setConfirmDel(null);
+  }
+
+  function quickStatus(id, status) {
+    const updated = works.map(w => w.id === id ? { ...w, status } : w);
+    setWorks(updated); saveData('works', updated);
+  }
+
+  // Groups via shared utility getDateGroups(items, 'startDate')
+
+  return (
+    <div>
+      {confirmDel && (
+        <ConfirmModal
+          icon="🕯" title="Remover trabalho?"
+          desc="Esta ação não poderá ser desfeita."
+          onConfirm={confirmDeleteWork}
+          onCancel={() => setConfirmDel(null)}
+        />
+      )}
+      <div className="page-header">
+        <h2>Trabalhos Espirituais</h2>
+        <p>{works.filter(w => w.status === 'Em andamento').length} em andamento</p>
+      </div>
+
+      <div className="table-container">
+        <div className="table-header">
+          <div className="tabs" style={{border:'none',marginBottom:0}}>
+            <button className={`tab${view==='lista'?' active':''}`} onClick={() => setView('lista')}>Lista</button>
+            <button className={`tab${view==='agenda'?' active':''}`} onClick={() => setView('agenda')}>Agenda</button>
+          </div>
+          <button className="btn btn-primary" onClick={openNew}>+ Novo Trabalho</button>
+        </div>
+        <div className="search-bar">
+          <input className="search-input" placeholder="Buscar cliente ou tipo de trabalho..." value={search} onChange={e => setSearch(e.target.value)} />
+          <select className="search-input" style={{maxWidth:200}} value={filterType} onChange={e => setFilterType(e.target.value)}>
+            <option value="">Todos os tipos</option>
+            {WORK_TYPES.map(t => <option key={t}>{t}</option>)}
+          </select>
+          <select className="search-input" style={{maxWidth:170}} value={filterStatus} onChange={e => setFilterStatus(e.target.value)}>
+            <option value="">Todos os status</option>
+            {WORK_STATUS.map(s => <option key={s}>{s}</option>)}
+          </select>
+        </div>
+
+        {view === 'lista' ? (
+          sorted.length === 0
+            ? <div className="empty-state"><div className="empty-icon">🕯️</div><p>Nenhum trabalho registrado</p></div>
+            : <>
+                {getDateGroups(paged, 'startDate').map(grp => grp.items.length === 0 ? null : (
+                  <React.Fragment key={grp.key}>
+                    <div style={{padding:'10px 16px 4px',fontFamily:'DM Mono,monospace',fontSize:9,letterSpacing:'0.2em',textTransform:'uppercase',color:grp.color,background:'rgba(0,0,0,0.2)',borderBottom:'1px solid rgba(128,128,128,0.15)'}}>
+                      {grp.label} · {grp.items.length} trabalho{grp.items.length !== 1 ? 's' : ''}
+                    </div>
+                    <table>
+                      <thead><tr>
+                        <th {...wrkThProps('clientName')}>Cliente</th>
+                        <th {...wrkThProps('type')}>Tipo</th>
+                        <th {...wrkThProps('startDate')}>Início</th>
+                        <th>Horário</th>
+                        <th>Valor / Pgto</th>
+                        <th>Término</th>
+                        <th {...wrkThProps('status')}>Status</th>
+                        <th>Por</th>
+                        <th></th>
+                      </tr></thead>
+                      <tbody>
+                        {grp.items.map(w => {
+                          const cl = clients.find(c => c.id === w.clientId);
+                          const total = parseMoney(w.value);
+                          const pago = parseMoney(w.valorPago);
+                          const isParcial = w.pagamento === 'parcial' && total > 0;
+                          const payLabel = w.pagamento === 'depois'
+                            ? { icon:'📅', label:'Paga depois', color:'#e08888' }
+                            : w.pagamento === 'parcial'
+                              ? { icon:'⚖', label:'Parcial', color:'var(--gold)' }
+                              : null;
+                          // Ocultar "Paga depois" se dívida quitada
+                          const debtQuitada = w.pagamento === 'depois' && (debts||[]).some(d =>
+                            d.clientId === w.clientId && d.status === 'Quitada' &&
+                            d.description && d.description.includes(formatDate(w.startDate))
+                          );
+                          const showPayLabel = payLabel && !debtQuitada;
+                          return (
+                            <tr key={w.id}>
+                              <td>
+                                {cl
+                                  ? <span style={{cursor:'pointer',borderBottom:'1px dotted var(--purple-light)'}} onClick={() => setShowDetail(cl)}>{clientName(cl)}</span>
+                                  : (w.clientName || '—')
+                                }
+                              </td>
+                              <td><span className={badgeClass(w.type)}>{w.type || '—'}</span></td>
+                              <td style={{fontFamily:'DM Mono,monospace',fontSize:14}}>{formatDate(w.startDate)}</td>
+                              <td style={{fontFamily:'DM Mono,monospace',fontSize:14}}>{w.time || '—'}</td>
+                              <td>
+                                {w.value ? (
+                                  <div style={{display:'flex',flexDirection:'column',gap:4}}>
+                                    <span style={{fontFamily:'DM Mono,monospace',fontSize:14,color:w.currency==='EUR'?'#a8d8c8':'var(--gold)'}}>
+                                      {formatValue(w.value, w.currency)}
+                                    </span>
+                                    {isParcial && (
+                                      <div style={{display:'flex',flexDirection:'column',gap:2}}>
+                                        <span style={{fontSize:11,color:'var(--text-dim)',fontFamily:'DM Mono,monospace'}}>
+                                          pago <span style={{color:'#7ec8a0'}}>{formatValue(String(pago),w.currency)}</span>
+                                        </span>
+                                        <span style={{fontSize:11,color:'#e0a870',fontFamily:'DM Mono,monospace'}}>
+                                          restam {formatValue(String(Math.max(0,total-pago)),w.currency)}
+                                        </span>
+                                      </div>
+                                    )}
+                                    {showPayLabel && !isParcial && (
+                                      <span style={{fontSize:11,color:payLabel.color,fontFamily:'DM Mono,monospace'}}>{payLabel.icon} {payLabel.label}</span>
+                                    )}
+                                    {debtQuitada && (
+                                      <span style={{fontSize:11,color:'#7ec8a0',fontFamily:'DM Mono,monospace'}}>✓ quitado</span>
+                                    )}
+                                  </div>
+                                ) : <span style={{color:'var(--text-dim)'}}>—</span>}
+                              </td>
+                              <td><div className="obs-cell">{w.description || '—'}</div></td>
+                              <td style={{fontFamily:'DM Mono,monospace',fontSize:14}}>{formatDate(w.endDate)}</td>
+                              <td>
+                                <select value={w.status} onChange={e => quickStatus(w.id, e.target.value)}
+                                  style={{background:'transparent',border:'none',cursor:'pointer',fontSize:13,fontFamily:'DM Mono,monospace',letterSpacing:'0.1em',
+                                    color:w.status==='Concluído'?'#7ec49a':w.status==='Cancelado'?'#e08888':'var(--gold)'}}>
+                                  {WORK_STATUS.map(s => <option key={s} style={{background:'#15101f'}}>{s}</option>)}
+                                </select>
+                              </td>
+                              <td><span className="badge badge-user">{w.createdBy || '—'}</span></td>
+                              <td>
+                                <div style={{display:'flex',gap:6}}>
+                                  <button className="btn btn-ghost btn-sm" onClick={() => openEdit(w)}>Editar</button>
+                                  <button className="btn btn-danger" onClick={() => deleteWork(w.id)}>✕</button>
+                                </div>
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  </React.Fragment>
+                ))}
+                <Pagination page={page} totalPages={totalPages} setPage={setPage} total={sorted.length} />
+              </>
+        ) : (
+          <div style={{padding:'16px 24px'}}>
+            {agendaDates.length === 0
+              ? <div className="empty-state"><div className="empty-icon">🕯️</div><p>Nenhum trabalho</p></div>
+              : agendaDates.map(date => {
+                  const isToday = date === today();
+                  return (
+                    <div key={date} className="agenda-day">
+                      <div className={`agenda-day-header${isToday?' today-header':''}`}>
+                        {formatDate(date)}{isToday ? ' — Hoje' : ''}
+                      </div>
+                      {sorted.filter(w => w.startDate === date).sort((a,b) => (a.time||'') > (b.time||'') ? 1 : -1).map(w => {
+                        const cl = clients.find(c => c.id === w.clientId);
+                        return (
+                          <div key={w.id} className={`agenda-item${isToday?' today-item':''}`} onClick={() => openEdit(w)}>
+                            <div className="agenda-time">{w.time || '--:--'}</div>
+                            <div className="agenda-info" style={{flex:1}}>
+                              <h4>{cl ? clientName(cl) : w.clientName || '—'}</h4>
+                              <p>{w.type} {w.value && ('· ' + formatValue(w.value, w.currency))}</p>
+                              {w.description && <div className="agenda-obs">{w.description}</div>}
+                            </div>
+                            <span className={badgeClass(w.status)} style={{marginLeft:'auto',alignSelf:'center'}}>{w.status}</span>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  );
+                })
+            }
+          </div>
+        )}
+      </div>
+
+      {savedConfirm && (
+        <div style={{position:'fixed',bottom:24,right:24,zIndex:200,background:'var(--surface)',border:'1px solid var(--purple-light)',padding:'20px 24px',minWidth:300,maxWidth:380,boxShadow:'0 8px 32px rgba(0,0,0,0.5)'}}>
+          <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:12}}>
+            <span style={{fontFamily:'Cinzel,serif',fontSize:14,color:'var(--purple-light)',letterSpacing:'0.1em'}}>✦ Trabalho Salvo</span>
+            <button onClick={() => setSavedConfirmQueue(q => q.slice(1))} style={{background:'none',border:'none',color:'var(--text-dim)',cursor:'pointer',fontSize:16}}>✕</button>
+          </div>
+          <div style={{display:'grid',gridTemplateColumns:'auto 1fr',gap:'6px 12px',fontSize:14}}>
+            <span style={{color:'var(--text-dim)'}}>Cliente</span><span>{savedConfirm.clientName}</span>
+            <span style={{color:'var(--text-dim)'}}>Tipo</span><span>{savedConfirm.type || '—'}</span>
+            <span style={{color:'var(--text-dim)'}}>Início</span>
+            <span style={{fontFamily:'DM Mono,monospace',color:'var(--gold)'}}>
+              {formatDate(savedConfirm.date)}{savedConfirm.time ? (' às ' + savedConfirm.time) : ''}
+            </span>
+            {savedConfirm.value && (
+              <><span style={{color:'var(--text-dim)'}}>Valor</span>
+              <span style={{fontFamily:'DM Mono,monospace',color:savedConfirm.currency==='EUR'?'#a8d8c8':'var(--gold)'}}>{formatValue(savedConfirm.value, savedConfirm.currency)}</span></>
+            )}
+            {savedConfirm.hasDebt && (
+              <><span style={{color:'var(--text-dim)'}}>Dívida</span>
+              <span style={{color:'#e08888'}}>◉ Criada automaticamente</span></>
+            )}
+          </div>
+        </div>
+      )}
+
+      {showDetail && (
+        <Modal title="Ficha do Cliente" onClose={() => setShowDetail(null)} wide>
+          <div className="detail-grid">
+            <div><div className="detail-item-label">Nome</div><div className="detail-item-value">{showDetail.name}</div></div>
+            <div><div className="detail-item-label">Telefone</div><div className="detail-item-value">{showDetail.phone || '—'}</div></div>
+            <div><div className="detail-item-label">País</div><div className="detail-item-value">{showDetail.country || '—'}</div></div>
+            <div><div className="detail-item-label">Nascimento</div><div className="detail-item-value">{formatDate(showDetail.birthdate)}</div></div>
+            <div><div className="detail-item-label">Signo</div><div className="detail-item-value">{getZodiac(showDetail.birthdate) || '—'}</div></div>
+            <div style={{gridColumn:'1/-1'}}><div className="detail-item-label">Observações</div><div className="detail-item-value" style={{fontStyle:'italic',color:'var(--text-muted)'}}>{showDetail.notes || '—'}</div></div>
+          </div>
+          <div className="divider-line"/>
+          <ClientHistoryTabs
+            clientApts={[]}
+            clientWrks={sortByDate(works.filter(w => w.clientId === showDetail.id), 'startDate', 'desc')}
+            clientDebts={sortByDate((debts||[]).filter(d => d.clientId === showDetail.id && d.status !== 'Quitada'), 'dueDate', 'desc')}
+          />
+        </Modal>
+      )}
+
+      {showModal && (
+        <Modal title={editing ? 'Editar Trabalho' : 'Novo Trabalho'} onClose={() => setShowModal(false)} wide
+          footer={<><button className="btn btn-ghost" onClick={() => setShowModal(false)}>Cancelar</button><button className="btn btn-primary" onClick={save}>Salvar Trabalho</button></>}>
+          <div className="form-group">
+            <label className="form-label">Cliente</label>
+            <ClientSearchSelect
+              clients={clients}
+              value={form.clientId}
+              onChange={id => setForm({...form, clientId:id, clientName:''})}
+              clientName={clientName}
+            />
+            {!form.clientId && (
+              <input className="form-input" style={{marginTop:8}} value={form.clientName} onChange={e => setForm({...form, clientName:e.target.value})} placeholder="Ou digitar nome manualmente..." />
+            )}
+            {form.clientId && (() => {
+              const cl = clients.find(c => c.id === form.clientId);
+              if (!cl) return null;
+              const wrkCount = works.filter(w => w.clientId === cl.id).length;
+              const openDebt = (debts||[]).filter(d => d.clientId === cl.id && d.status !== 'Quitada');
+              const debtTotal = openDebt.reduce((s, d) => s + parseMoney(getRemaining(d.total, d.paid)), 0);
+              return (
+                <div className="client-summary">
+                  <div className="client-summary-item">Trabalhos: <span>{wrkCount}</span></div>
+                  {cl.phone && <div className="client-summary-item">Fone: <span>{cl.phone}</span></div>}
+                  {cl.country && <div className="client-summary-item">País: <span>{cl.country}</span></div>}
+                  {openDebt.length > 0 && <div className="client-summary-item client-summary-debt">⚠ Dívida em aberto: <span>{formatMoney(debtTotal)}</span></div>}
+                  {cl.notes && <div className="client-summary-item" style={{width:'100%',color:'var(--text-muted)',fontStyle:'italic'}}>{cl.notes}</div>}
+                </div>
+              );
+            })()}
+          </div>
+          <div className="form-row">
+            <div className="form-group">
+              <label className="form-label">Tipo de Trabalho</label>
+              <select className="form-input" value={form.type} onChange={e => setForm({...form, type:e.target.value})}>
+                <option value="">— Selecionar —</option>
+                {WORK_TYPES.map(t => <option key={t}>{t}</option>)}
+              </select>
+            </div>
+            <div className="form-group">
+              <label className="form-label">Status</label>
+              <select className="form-input" value={form.status} onChange={e => setForm({...form, status:e.target.value})}>
+                {WORK_STATUS.map(s => <option key={s}>{s}</option>)}
+              </select>
+            </div>
+          </div>
+          <div className="form-row">
+            <div className="form-group">
+              <label className="form-label">Data de Início</label>
+              <input type="date" className="form-input" value={form.startDate} onChange={e => setForm({...form, startDate:e.target.value})} />
+            </div>
+            <div className="form-group">
+              <label className="form-label">Horário</label>
+              <input type="time" className="form-input" value={form.time} onChange={e => setForm({...form, time:e.target.value})} />
+            </div>
+          </div>
+          <div className="form-row">
+            <div className="form-group">
+              <label className="form-label">Valor</label>
+              <CurrencyField value={form.value} currency={form.currency} onValueChange={v => setForm({...form, value:v})} onCurrencyChange={c => setForm({...form, currency:c})} />
+            </div>
+            <div className="form-group">
+              <label className="form-label">Previsão de Término</label>
+              <input type="date" className="form-input" value={form.endDate} onChange={e => setForm({...form, endDate:e.target.value})} />
+            </div>
+          </div>
+          {!editing && (
+            <div className="form-group">
+              <label className="form-label">Pagamento</label>
+              <div style={{display:'flex',gap:8,flexWrap:'wrap'}}>
+                {[{v:'na_hora',l:'💰 Paga na hora'},{v:'parcial',l:'⚖ Parcial'},{v:'depois',l:'📅 Paga depois'}].map(opt => (
+                  <button key={opt.v} type="button" onClick={() => setForm({...form, pagamento:opt.v, valorPago:'', vencimento:''})}
+                    style={{padding:'8px 16px',border:'1px solid',borderColor:form.pagamento===opt.v?'var(--purple-light)':'var(--border)',background:form.pagamento===opt.v?'rgba(155,111,212,0.15)':'transparent',color:form.pagamento===opt.v?'var(--purple-light)':'var(--text-dim)',cursor:'pointer',fontSize:14,fontFamily:'Cormorant Garamond,serif',transition:'all 0.2s'}}>
+                    {opt.l}
+                  </button>
+                ))}
+              </div>
+              {form.pagamento === 'parcial' && (
+                <div className="form-row" style={{marginTop:10}}>
+                  <div className="form-group">
+                    <label className="form-label">Valor pago na hora</label>
+                    <input className="form-input" type="number" min="0" step="0.01" value={form.valorPago} onChange={e => setForm({...form, valorPago:e.target.value})} placeholder={`0,00 ${form.currency==='EUR'?'€':'R$'}`} />
+                  </div>
+                  <div className="form-group">
+                    <label className="form-label">Vencimento do restante</label>
+                    <input type="date" className="form-input" value={form.vencimento} onChange={e => setForm({...form, vencimento:e.target.value})} />
+                  </div>
+                </div>
+              )}
+              {form.pagamento === 'depois' && (
+                <div className="form-group" style={{marginTop:10}}>
+                  <label className="form-label">Data de vencimento</label>
+                  <input type="date" className="form-input" value={form.vencimento} onChange={e => setForm({...form, vencimento:e.target.value})} />
+                </div>
+              )}
+              {form.pagamento !== 'na_hora' && parseMoney(form.value) > 0 && (
+                <div style={{marginTop:8,padding:'8px 12px',background:'rgba(224,136,136,0.1)',border:'1px solid rgba(224,136,136,0.3)',fontSize:13,color:'#e08888',fontFamily:'DM Mono,monospace'}}>
+                  ◉ Dívida de {formatValue(form.pagamento==='parcial' ? String(parseMoney(form.value) - parseMoney(form.valorPago)) : form.value, form.currency)} será criada automaticamente
+                </div>
+              )}
+            </div>
+          )}
+          <div className="form-group">
+            <label className="form-label">Descrição / Pedido</label>
+            <textarea className="form-input" value={form.description} onChange={e => setForm({...form, description:e.target.value})} placeholder="Detalhes do que foi pedido, materiais usados, observações..." />
+          </div>
+          <div className="form-group">
+            <label className="form-label">Resultado / Retorno do Cliente</label>
+            <textarea className="form-input" value={form.result} onChange={e => setForm({...form, result:e.target.value})} placeholder="O que o cliente relatou, resultado observado..." />
+          </div>
+        </Modal>
+      )}
+    </div>
+  );
+}
+
+// ── FINANCE ──────────────────────────────────────────────
+function Finance({ appointments, works, debts, exchangeRate }) {
+  const [year, setYear] = useState(new Date().getFullYear());
+  const rate = exchangeRate || 6.20;
+
+  const currentYear = new Date().getFullYear();
+  const dataYears = [...new Set([
+    ...appointments.map(a => a.date ? parseInt(a.date.slice(0,4)) : null),
+    ...works.map(w => w.startDate ? parseInt(w.startDate.slice(0,4)) : null),
+  ].filter(Boolean))];
+  const years = [...new Set([...dataYears, currentYear])].sort((a,b) => a - b);
+
+  // Valor efetivamente recebido de um item (total - dívida vinculada em aberto)
+  function receivedValue(item, itemType) {
+    const total = parseMoney(item.value);
+    if (!total) return 0;
+    if (!item.pagamento || item.pagamento === 'na_hora') return total;
+    // Prefer exact link via sourceId (set when debt was auto-created)
+    const linkedDebt = (debts||[]).find(d => d.sourceId === item.id && d.status !== 'Quitada');
+    if (linkedDebt) {
+      const unpaid = parseMoney(getRemaining(linkedDebt.total, linkedDebt.paid));
+      return Math.max(0, total - unpaid);
+    }
+    // Fallback: match by clientId + currency (legacy records without sourceId)
+    const itemDebts = (debts||[]).filter(d =>
+      d.clientId === item.clientId &&
+      d.status !== 'Quitada' &&
+      d.currency === (item.currency || 'BRL') &&
+      !d.sourceId
+    );
+    const unpaid = itemDebts.reduce((s, d) => s + parseMoney(getRemaining(d.total, d.paid)), 0);
+    return Math.max(0, total - unpaid);
+  }
+
+  function monthData(m) {
+    const prefix = `${year}-${String(m).padStart(2,'0')}`;
+    const apts = appointments.filter(a => a.date && a.date.startsWith(prefix) && a.status !== 'Cancelado');
+    const wrks = works.filter(w => w.startDate && w.startDate.startsWith(prefix) && w.status !== 'Cancelado');
+
+    const aptBRL = apts.filter(a => (a.currency||'BRL') === 'BRL').reduce((s,a) => s + receivedValue(a,'apt'), 0);
+    const aptEUR = apts.filter(a => a.currency === 'EUR').reduce((s,a) => s + receivedValue(a,'apt'), 0);
+    const wrkBRL = wrks.filter(w => (w.currency||'BRL') === 'BRL').reduce((s,w) => s + receivedValue(w,'wrk'), 0);
+    const wrkEUR = wrks.filter(w => w.currency === 'EUR').reduce((s,w) => s + receivedValue(w,'wrk'), 0);
+
+    const aptTotalEUR = aptEUR + (aptBRL / rate);
+    const wrkTotalEUR = wrkEUR + (wrkBRL / rate);
+
+    return { aptBRL, aptEUR, wrkBRL, wrkEUR, aptTotalEUR, wrkTotalEUR, totalEUR: aptTotalEUR + wrkTotalEUR };
+  }
+
+  const rows = MONTHS.map((name, i) => ({ name, ...monthData(i + 1) }));
+  const grandEUR = rows.reduce((s, r) => s + r.totalEUR, 0);
+  // Puros: só pagamentos na moeda original (sem conversão)
+  const grandAptEURpure = rows.reduce((s, r) => s + r.aptEUR, 0);
+  const grandAptBRL     = rows.reduce((s, r) => s + r.aptBRL, 0);
+  const grandWrkEURpure = rows.reduce((s, r) => s + r.wrkEUR, 0);
+  const grandWrkBRL     = rows.reduce((s, r) => s + r.wrkBRL, 0);
+
+  const allApts = appointments.filter(a => a.status !== 'Cancelado' && a.date && a.date.startsWith(String(year)));
+  const allWrks = works.filter(w => w.status !== 'Cancelado' && w.startDate && w.startDate.startsWith(String(year)));
+
+  const byService = SERVICES.map(s => {
+    const items = allApts.filter(a => a.service === s);
+    return {
+      name: s,
+      totalBRL: items.filter(a => (a.currency||'BRL') === 'BRL').reduce((sum, a) => sum + receivedValue(a,'apt'), 0),
+      totalEUR: items.filter(a => a.currency === 'EUR').reduce((sum, a) => sum + receivedValue(a,'apt'), 0),
+      count: items.length
+    };
+  }).filter(s => s.count > 0).sort((a,b) => (b.totalBRL + b.totalEUR*rate) - (a.totalBRL + a.totalEUR*rate));
+
+  const byWorkType = WORK_TYPES.map(t => {
+    const items = allWrks.filter(w => w.type === t);
+    return {
+      name: t,
+      totalBRL: items.filter(w => (w.currency||'BRL') === 'BRL').reduce((sum, w) => sum + receivedValue(w,'wrk'), 0),
+      totalEUR: items.filter(w => w.currency === 'EUR').reduce((sum, w) => sum + receivedValue(w,'wrk'), 0),
+      count: items.length
+    };
+  }).filter(w => w.count > 0).sort((a,b) => (b.totalBRL + b.totalEUR*rate) - (a.totalBRL + a.totalEUR*rate));
+
+  const thisMonth = new Date().getMonth() + 1;
+  const currentMonthData = monthData(thisMonth);
+
+  const grandBRL = rows.reduce((s, r) => s + r.aptBRL + r.wrkBRL, 0);
+  const grandBRLApt = rows.reduce((s, r) => s + r.aptBRL, 0);
+  const grandBRLWrk = rows.reduce((s, r) => s + r.wrkBRL, 0);
+
+  const byServiceBRL = SERVICES.map(s => ({
+    name: s,
+    total: allApts.filter(a => a.service === s && (a.currency||'BRL') === 'BRL').reduce((sum,a) => sum + receivedValue(a,'apt'), 0),
+    count: allApts.filter(a => a.service === s && (a.currency||'BRL') === 'BRL').length,
+  })).filter(s => s.count > 0).sort((a,b) => b.total - a.total);
+
+  const byWorkTypeBRL = WORK_TYPES.map(t => ({
+    name: t,
+    total: allWrks.filter(w => w.type === t && (w.currency||'BRL') === 'BRL').reduce((sum,w) => sum + receivedValue(w,'wrk'), 0),
+    count: allWrks.filter(w => w.type === t && (w.currency||'BRL') === 'BRL').length,
+  })).filter(w => w.count > 0).sort((a,b) => b.total - a.total);
+
+  const byServiceEUR = SERVICES.map(s => ({
+    name: s,
+    total: allApts.filter(a => a.service === s && a.currency === 'EUR').reduce((sum,a) => sum + receivedValue(a,'apt'), 0),
+    count: allApts.filter(a => a.service === s && a.currency === 'EUR').length,
+  })).filter(s => s.count > 0).sort((a,b) => b.total - a.total);
+
+  const byWorkTypeEUR = WORK_TYPES.map(t => ({
+    name: t,
+    total: allWrks.filter(w => w.type === t && w.currency === 'EUR').reduce((sum,w) => sum + receivedValue(w,'wrk'), 0),
+    count: allWrks.filter(w => w.type === t && w.currency === 'EUR').length,
+  })).filter(w => w.count > 0).sort((a,b) => b.total - a.total);
+
+  // Separar linhas por moeda para tabelas individuais
+  const rowsBRL = rows.map(r => ({ name: r.name, apt: r.aptBRL, wrk: r.wrkBRL, total: r.aptBRL + r.wrkBRL })).filter(r => r.total > 0);
+  const rowsEUR = rows.map(r => ({ name: r.name, apt: r.aptEUR, wrk: r.wrkEUR, total: r.aptEUR + r.wrkEUR, totalConv: r.totalEUR })).filter(r => r.total > 0);
+
+  function SectionLabel({ color, label }) {
+    return (
+      <div style={{display:'flex',alignItems:'center',gap:12,margin:'28px 0 16px'}}>
+        <div style={{width:3,height:28,background:color,borderRadius:2}}/>
+        <span style={{fontFamily:'Cinzel,serif',fontSize:16,letterSpacing:'0.15em',textTransform:'uppercase',color}}>{label}</span>
+      </div>
+    );
+  }
+
+  function ByTypeList({ items, currency }) {
+    if (items.length === 0) return <p style={{color:'var(--text-dim)',fontStyle:'italic',fontSize:15,padding:'0 20px 16px'}}>Sem dados</p>;
+    const color = currency === 'BRL' ? 'var(--purple-light)' : 'var(--gold)';
+    const symbol = currency === 'BRL' ? 'R$' : '€';
+    return (
+      <div style={{padding:'12px 20px'}}>
+        {items.map(s => (
+          <div key={s.name} style={{marginBottom:14}}>
+            <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:4}}>
+              <span style={{fontSize:14,color:'var(--text)'}}>{s.name}</span>
+              <span style={{fontFamily:'DM Mono,monospace',fontSize:13,color}}>{symbol} {formatMoney(s.total)}</span>
+            </div>
+            <div style={{height:2,background:'var(--border)',borderRadius:1}}>
+              <div style={{height:'100%',width:`${(s.total/items[0].total)*100}%`,background:color,transition:'width 0.4s',borderRadius:1}}/>
+            </div>
+            <div style={{fontSize:12,color:'var(--text-dim)',fontStyle:'italic',marginTop:3}}>{s.count} registro{s.count!==1?'s':''}</div>
+          </div>
+        ))}
+      </div>
+    );
+  }
+
+  return (
+    <div>
+      <div className="page-header">
+        <h2>Faturamento</h2>
+        <p>Resumo financeiro · Taxa de câmbio: 1 € = R$ {rate.toFixed(2)}</p>
+      </div>
+
+      <div style={{display:'flex',alignItems:'center',gap:12,marginBottom:20}}>
+        <span style={{fontFamily:'DM Mono,monospace',fontSize:11,color:'var(--text-dim)',letterSpacing:'0.2em',textTransform:'uppercase'}}>Ano</span>
+        {years.map(y => (
+          <button key={y} className={`page-btn${year===y?' active':''}`} onClick={() => setYear(y)}>{y}</button>
+        ))}
+      </div>
+
+      {/* RESUMO DO MÊS — card único com as duas moedas */}
+      <div className="cards-grid" style={{gridTemplateColumns:'repeat(3,1fr)',marginBottom:8}}>
+        <div className="stat-card gold">
+          <div className="stat-label">Este Mês — Total €</div>
+          <div className="stat-value" style={{fontSize:20}}>€ {formatMoney(currentMonthData.totalEUR)}</div>
+          <div className="stat-sub">{MONTHS[thisMonth - 1]} · tudo convertido</div>
+        </div>
+        <div className="stat-card purple">
+          <div className="stat-label">Este Mês — R$</div>
+          <div className="stat-value" style={{fontSize:20}}>R$ {formatMoney(currentMonthData.aptBRL + currentMonthData.wrkBRL)}</div>
+          <div className="stat-sub">{MONTHS[thisMonth - 1]} · pagamentos em reais</div>
+        </div>
+        <div className="stat-card sage">
+          <div className="stat-label">Este Mês — €</div>
+          <div className="stat-value" style={{fontSize:20}}>€ {formatMoney(currentMonthData.aptEUR + currentMonthData.wrkEUR)}</div>
+          <div className="stat-sub">{MONTHS[thisMonth - 1]} · pagamentos em euro</div>
+        </div>
+      </div>
+
+      {/* ══ SEÇÃO REAIS ══════════════════════════════════════ */}
+      <SectionLabel color="var(--purple-light)" label="Pagamentos em Reais (R$)" />
+
+      <div className="cards-grid" style={{gridTemplateColumns:'repeat(3,1fr)',marginBottom:16}}>
+        <div className="stat-card purple">
+          <div className="stat-label">Total Ano R$</div>
+          <div className="stat-value" style={{fontSize:20}}>R$ {formatMoney(grandBRL)}</div>
+          <div className="stat-sub">atend. + trab. · {year}</div>
+        </div>
+        <div className="stat-card purple">
+          <div className="stat-label">Atendimentos R$</div>
+          <div className="stat-value" style={{fontSize:20}}>R$ {formatMoney(grandBRLApt)}</div>
+          <div className="stat-sub">ano {year}</div>
+        </div>
+        <div className="stat-card purple">
+          <div className="stat-label">Trabalhos R$</div>
+          <div className="stat-value" style={{fontSize:20}}>R$ {formatMoney(grandBRLWrk)}</div>
+          <div className="stat-sub">ano {year}</div>
+        </div>
+      </div>
+
+      <div style={{display:'grid',gridTemplateColumns:'2fr 1fr',gap:16,marginBottom:8}}>
+        <div className="table-container">
+          <div className="table-header"><span className="table-title">Mês a Mês — R$ · {year}</span></div>
+          {rowsBRL.length === 0
+            ? <div className="empty-state"><div className="empty-icon">◈</div><p>Nenhum pagamento em reais em {year}</p></div>
+            : <table className="finance-table">
+              <thead><tr>
+                <th>Mês</th><th>Atend. R$</th><th>Trab. R$</th><th>Total R$</th>
+              </tr></thead>
+              <tbody>
+                {rowsBRL.map(r => (
+                  <tr key={r.name}>
+                    <td>{r.name}</td>
+                    <td style={{color: r.apt > 0 ? 'var(--purple-light)' : 'var(--text-dim)',fontSize:13}}>{r.apt > 0 ? `R$ ${formatMoney(r.apt)}` : '—'}</td>
+                    <td style={{color: r.wrk > 0 ? '#a8d8c8' : 'var(--text-dim)',fontSize:13}}>{r.wrk > 0 ? `R$ ${formatMoney(r.wrk)}` : '—'}</td>
+                    <td style={{color:'var(--purple-light)',fontFamily:'DM Mono,monospace',fontSize:13,fontWeight:600}}>R$ {formatMoney(r.total)}</td>
+                  </tr>
+                ))}
+                <tr className="total-row">
+                  <td>Total</td><td>—</td><td>—</td>
+                  <td>R$ {formatMoney(grandBRL)}</td>
+                </tr>
+              </tbody>
+            </table>
+          }
+        </div>
+        <div>
+          <div className="table-container" style={{marginBottom:16}}>
+            <div className="table-header"><span className="table-title">Por Serviço — R$</span></div>
+            <ByTypeList items={byServiceBRL} currency="BRL" />
+          </div>
+          <div className="table-container">
+            <div className="table-header"><span className="table-title">Por Trabalho — R$</span></div>
+            <ByTypeList items={byWorkTypeBRL} currency="BRL" />
+          </div>
+        </div>
+      </div>
+
+      {/* ══ SEÇÃO EURO ═══════════════════════════════════════ */}
+      <SectionLabel color="var(--gold)" label="Pagamentos em Euro (€)" />
+
+      <div className="cards-grid" style={{gridTemplateColumns:'repeat(3,1fr)',marginBottom:16}}>
+        <div className="stat-card gold">
+          <div className="stat-label">Total Ano €</div>
+          <div className="stat-value" style={{fontSize:20}}>€ {formatMoney(grandAptEURpure + grandWrkEURpure)}</div>
+          <div className="stat-sub">atend. + trab. · {year}</div>
+        </div>
+        <div className="stat-card gold">
+          <div className="stat-label">Atendimentos €</div>
+          <div className="stat-value" style={{fontSize:20}}>€ {formatMoney(grandAptEURpure)}</div>
+          <div className="stat-sub">ano {year}</div>
+        </div>
+        <div className="stat-card gold">
+          <div className="stat-label">Trabalhos €</div>
+          <div className="stat-value" style={{fontSize:20}}>€ {formatMoney(grandWrkEURpure)}</div>
+          <div className="stat-sub">ano {year}</div>
+        </div>
+      </div>
+
+      <div style={{display:'grid',gridTemplateColumns:'2fr 1fr',gap:16}}>
+        <div className="table-container">
+          <div className="table-header"><span className="table-title">Mês a Mês — € · {year}</span></div>
+          {rowsEUR.length === 0
+            ? <div className="empty-state"><div className="empty-icon">◈</div><p>Nenhum pagamento em euro em {year}</p></div>
+            : <table className="finance-table">
+              <thead><tr>
+                <th>Mês</th><th>Atend. €</th><th>Trab. €</th><th>Total €</th>
+              </tr></thead>
+              <tbody>
+                {rowsEUR.map(r => (
+                  <tr key={r.name}>
+                    <td>{r.name}</td>
+                    <td style={{color: r.apt > 0 ? '#a8d8c8' : 'var(--text-dim)',fontSize:13}}>{r.apt > 0 ? `€ ${formatMoney(r.apt)}` : '—'}</td>
+                    <td style={{color: r.wrk > 0 ? '#a8d8c8' : 'var(--text-dim)',fontSize:13}}>{r.wrk > 0 ? `€ ${formatMoney(r.wrk)}` : '—'}</td>
+                    <td style={{color:'var(--gold)',fontFamily:'DM Mono,monospace',fontSize:13,fontWeight:600}}>€ {formatMoney(r.total)}</td>
+                  </tr>
+                ))}
+                <tr className="total-row">
+                  <td>Total</td><td>—</td><td>—</td>
+                  <td>€ {formatMoney(grandAptEURpure + grandWrkEURpure)}</td>
+                </tr>
+              </tbody>
+            </table>
+          }
+        </div>
+        <div>
+          <div className="table-container" style={{marginBottom:16}}>
+            <div className="table-header"><span className="table-title">Por Serviço — €</span></div>
+            <ByTypeList items={byServiceEUR} currency="EUR" />
+          </div>
+          <div className="table-container">
+            <div className="table-header"><span className="table-title">Por Trabalho — €</span></div>
+            <ByTypeList items={byWorkTypeEUR} currency="EUR" />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ── DEBTS ────────────────────────────────────────────────
+function Debts({ clients, debts, setDebts, notify }) {
+  const [showModal, setShowModal] = useState(false);
+  const [editing, setEditing] = useState(null);
+  const [partialId, setPartialId] = useState(null);
+  const [partialValue, setPartialValue] = useState('');
+  const [form, setForm] = useState({ clientId:'', clientName:'', description:'', total:'', paid:'', currency:'BRL', dueDate:'', status:'Aberta' });
+
+  const [filterStatus, setFilterStatus] = useState('abertas');
+  const [search, setSearch] = useState('');
+  const [confirmDel, setConfirmDel] = useState(null);
+
+  const sorted = sortByDate(
+    debts.filter(d => {
+      const cl = clients.find(c => c.id === d.clientId);
+      const nameMatch = !search || (cl ? clientName(cl) : d.clientName || '').toLowerCase().includes(search.toLowerCase());
+      if (!nameMatch) return false;
+      if (filterStatus === 'abertas') return d.status !== 'Quitada';
+      if (filterStatus === 'quitadas') return d.status === 'Quitada';
+      return true;
+    }),
+    'dueDate', 'asc'
+  );
+  const { paged, page, setPage, totalPages } = usePagination(sorted);
+
+  const totalOwedBRL = debts.filter(d => d.status !== 'Quitada' && (d.currency||'BRL') === 'BRL').reduce((s,d) => s + getRemaining(d.total, d.paid), 0);
+  const totalOwedEUR = debts.filter(d => d.status !== 'Quitada' && d.currency === 'EUR').reduce((s,d) => s + getRemaining(d.total, d.paid), 0);
+
+  function openNew() {
+    setEditing(null);
+    setForm({ clientId:'', clientName:'', description:'', total:'', paid:'', currency:'BRL', dueDate:'', status:'Aberta' });
+    setShowModal(true);
+  }
+
+  function openEdit(d) {
+    setEditing(d.id);
+    setForm({ clientId:d.clientId||'', clientName:d.clientName||'', description:d.description||'', total:d.total||'', paid:d.paid||'', currency:d.currency||'BRL', dueDate:d.dueDate||'', status:d.status });
+    setShowModal(true);
+  }
+
+  function save() {
+    if (!form.description || !form.total) return;
+    const cl = clients.find(c => c.id === form.clientId);
+    const entry = { ...form, clientName: cl ? clientName(cl) : form.clientName };
+    if (editing) {
+      const updated = debts.map(d => d.id === editing ? { ...d, ...entry } : d);
+      setDebts(updated); saveData('debts', updated); notify('Dívida atualizada');
+    } else {
+      const updated = [...debts, { id: newId(), createdAt: today(), ...entry }];
+      setDebts(updated); saveData('debts', updated); notify('Dívida registrada');
+    }
+    setShowModal(false);
+  }
+
+  function markPaid(id) {
+    const updated = debts.map(d => d.id === id ? { ...d, paid: d.total, status: 'Quitada' } : d);
+    setDebts(updated); saveData('debts', updated); notify('Dívida quitada ✦');
+  }
+
+  function registerPartial(id) {
+    const d = debts.find(x => x.id === id);
+    if (!d) return;
+    const addPaid = parseMoney(partialValue);
+    if (!addPaid || addPaid <= 0) return;
+    const newPaid = parseMoney(d.paid) + addPaid;
+    const total = parseMoney(d.total);
+    const isNowPaid = newPaid >= total;
+    const updated = debts.map(x => x.id === id
+      ? { ...x, paid: String(Math.min(newPaid, total)), status: isNowPaid ? 'Quitada' : 'Aberta' }
+      : x
+    );
+    setDebts(updated); saveData('debts', updated);
+    notify(isNowPaid ? 'Dívida quitada ✦' : `Pagamento de ${formatValue(partialValue, d.currency)} registrado`);
+    setPartialId(null);
+    setPartialValue('');
+  }
+
+  function deleteDebt(id) {
+    setConfirmDel(id);
+  }
+  function confirmDeleteDebt() {
+    const updated = debts.filter(d => d.id !== confirmDel);
+    setDebts(updated); saveData('debts', updated); notify('Dívida removida');
+    setConfirmDel(null);
+  }
+
+  function isOverdueDebt(d) {
+    if (d.status === 'Quitada') return false;
+    if (!d.dueDate) return false;
+    return new Date(d.dueDate) < new Date(today());
+  }
+
+  return (
+    <div>
+      {confirmDel && (
+        <ConfirmModal
+          icon="◉" title="Remover dívida?"
+          desc="Esta ação não poderá ser desfeita."
+          onConfirm={confirmDeleteDebt}
+          onCancel={() => setConfirmDel(null)}
+        />
+      )}
+      <div className="page-header">
+        <h2>Dívidas</h2>
+        <p>{debts.filter(d => d.status !== 'Quitada').length} dívidas em aberto</p>
+      </div>
+
+      <div className="cards-grid" style={{gridTemplateColumns:'repeat(3,1fr)'}}>
+        <div className="stat-card crimson">
+          <div className="stat-label">Em Aberto R$</div>
+          <div className="stat-value" style={{fontSize:22}}>R$ {formatMoney(totalOwedBRL)}</div>
+          <div className="stat-sub">a receber em reais</div>
+        </div>
+        <div className="stat-card crimson">
+          <div className="stat-label">Em Aberto €</div>
+          <div className="stat-value" style={{fontSize:22}}>€ {formatMoney(totalOwedEUR)}</div>
+          <div className="stat-sub">a receber em euros</div>
+        </div>
+        <div className="stat-card gold">
+          <div className="stat-label">Quitadas</div>
+          <div className="stat-value" style={{fontSize:22}}>{debts.filter(d => d.status === 'Quitada').length}</div>
+          <div className="stat-sub">dívidas</div>
+        </div>
+      </div>
+
+      <div className="table-container">
+        <div className="table-header">
+          <span className="table-title">Registro de Dívidas</span>
+          <button className="btn btn-primary" onClick={openNew}>+ Nova Dívida</button>
+        </div>
+        <div className="search-bar" style={{display:'flex',gap:10,alignItems:'center'}}>
+          <input className="search-input" style={{flex:1}} placeholder="Buscar por apelido ou nome..." value={search} onChange={e => setSearch(e.target.value)} />
+          <select className="form-input" style={{width:'auto',minWidth:160,padding:'8px 12px',fontSize:13}} value={filterStatus} onChange={e => setFilterStatus(e.target.value)}>
+            <option value="todas">Todas as dívidas</option>
+            <option value="abertas">Em aberto</option>
+            <option value="quitadas">Quitadas</option>
+          </select>
+        </div>
+
+        {sorted.length === 0
+          ? <div className="empty-state"><div className="empty-icon">✦</div><p>Nenhuma dívida registrada</p></div>
+          : <>
+            <table>
+              <thead><tr>
+                <th>Cliente</th><th>Descrição</th><th>Total</th><th>Pago</th><th>Falta</th><th>Vencimento</th><th>Status</th><th></th>
+              </tr></thead>
+              <tbody>
+                {paged.map(d => {
+                  const cl = clients.find(c => c.id === d.clientId);
+                  const remaining = getRemaining(d.total, d.paid);
+                  const overdue = isOverdueDebt(d);
+                  const isOpen = partialId === d.id;
+                  // Status display: "Parcial" shown as "Aberta"
+                  const displayStatus = d.status === 'Parcial' ? 'Aberta' : d.status;
+                  const badgeCls = d.status === 'Quitada' ? 'badge badge-concluido' : 'badge badge-pendente';
+                  return (
+                    <React.Fragment key={d.id}>
+                      <tr style={{
+                        background: overdue ? 'rgba(224,136,136,0.07)' : 'transparent',
+                        borderLeft: overdue ? '2px solid #e08888' : '2px solid transparent',
+                      }}>
+                        <td>{cl ? clientName(cl) : d.clientName || '—'}</td>
+                        <td style={{fontSize:15,color: d.status==='Quitada'?'var(--text-dim)':'var(--text)'}}>{d.description}</td>
+                        <td style={{fontFamily:'DM Mono,monospace',fontSize:14,color:d.currency==='EUR'?'#a8d8c8':'var(--gold)'}}>{formatValue(d.total, d.currency)}</td>
+                        <td style={{fontFamily:'DM Mono,monospace',fontSize:14}} className="debt-paid">{formatValue(d.paid||0, d.currency)}</td>
+                        <td style={{fontFamily:'DM Mono,monospace',fontSize:14}} className={remaining > 0 ? 'debt-overdue' : 'debt-paid'}>
+                          {formatValue(remaining, d.currency)}
+                        </td>
+                        <td style={{fontFamily:'DM Mono,monospace',fontSize:14,color: overdue ? '#e08888' : 'var(--text-muted)'}}>
+                          {formatDate(d.dueDate)}{overdue ? ' ⚠' : ''}
+                        </td>
+                        <td><span className={badgeCls}>{displayStatus}</span></td>
+                        <td>
+                          <div style={{display:'flex',gap:4,alignItems:'center'}}>
+                            {d.status !== 'Quitada' && <>
+                              <button title="Quitar dívida" className="btn btn-sage btn-sm" onClick={() => markPaid(d.id)} style={{padding:'4px 8px',fontSize:13}}>✓</button>
+                              <button title="Registrar pagamento parcial" className="btn btn-ghost btn-sm" onClick={() => { setPartialId(isOpen ? null : d.id); setPartialValue(''); }}
+                                style={{padding:'4px 8px',fontSize:13,color: isOpen ? 'var(--purple-light)' : 'var(--text-dim)'}}>＋</button>
+                            </>}
+                            <button title="Editar" className="btn btn-ghost btn-sm" onClick={() => openEdit(d)} style={{padding:'4px 8px',fontSize:13}}>✎</button>
+                            <button title="Remover" className="btn btn-danger" onClick={() => deleteDebt(d.id)} style={{padding:'4px 8px',fontSize:13}}>✕</button>
+                          </div>
+                        </td>
+                      </tr>
+                      {isOpen && (
+                        <tr style={{background:'rgba(155,111,212,0.06)'}}>
+                          <td colSpan={8} style={{padding:'10px 16px'}}>
+                            <div style={{display:'flex',alignItems:'center',gap:10}}>
+                              <span style={{fontFamily:'DM Mono,monospace',fontSize:11,color:'var(--text-dim)',letterSpacing:'0.1em',whiteSpace:'nowrap'}}>
+                                REGISTRAR PAGAMENTO — falta {formatValue(remaining, d.currency)}
+                              </span>
+                              <input
+                                type="number" min="0" step="0.01"
+                                className="form-input"
+                                style={{maxWidth:140,padding:'6px 10px',fontSize:14}}
+                                placeholder={`0,00 ${d.currency==='EUR'?'€':'R$'}`}
+                                value={partialValue}
+                                onChange={e => setPartialValue(e.target.value)}
+                                autoFocus
+                              />
+                              <button className="btn btn-primary btn-sm" onClick={() => registerPartial(d.id)}>Confirmar</button>
+                              <button className="btn btn-ghost btn-sm" onClick={() => { setPartialId(null); setPartialValue(''); }}>Cancelar</button>
+                            </div>
+                          </td>
+                        </tr>
+                      )}
+                    </React.Fragment>
+                  );
+                })}
+              </tbody>
+            </table>
+            <Pagination page={page} totalPages={totalPages} setPage={setPage} total={sorted.length} />
+          </>
+        }
+      </div>
+
+      {showModal && (
+        <Modal
+          title={editing ? 'Editar Dívida' : 'Nova Dívida'}
+          onClose={() => setShowModal(false)}
+          footer={<>
+            <button className="btn btn-ghost" onClick={() => setShowModal(false)}>Cancelar</button>
+            <button className="btn btn-primary" onClick={save}>Salvar</button>
+          </>}
+        >
+          <div className="form-group">
+            <label className="form-label">Cliente</label>
+            <select className="form-input" value={form.clientId} onChange={e => setForm({...form, clientId:e.target.value, clientName:''})}>
+              <option value="">— Selecionar cliente —</option>
+              {clients.map(c => <option key={c.id} value={c.id}>{clientName(c)}</option>)}
+            </select>
+          </div>
+          {!form.clientId && (
+            <div className="form-group">
+              <label className="form-label">Ou digitar nome</label>
+              <input className="form-input" value={form.clientName} onChange={e => setForm({...form, clientName:e.target.value})} placeholder="Nome" />
+            </div>
+          )}
+          <div className="form-group">
+            <label className="form-label">Descrição *</label>
+            <input className="form-input" value={form.description} onChange={e => setForm({...form, description:e.target.value})} placeholder="Ex: Trabalho de proteção, Leitura parcelada..." />
+          </div>
+          <div className="form-row">
+            <div className="form-group">
+              <label className="form-label">Valor Total *</label>
+              <CurrencyField
+                value={form.total}
+                currency={form.currency}
+                onValueChange={v => setForm({...form, total:v})}
+                onCurrencyChange={c => setForm({...form, currency:c})}
+              />
+            </div>
+            <div className="form-group">
+              <label className="form-label">Valor Pago</label>
+              <input type="number" min="0" step="0.01" className="form-input" value={form.paid} onChange={e => setForm({...form, paid:e.target.value})} placeholder="0,00" />
+            </div>
+          </div>
+          <div className="form-row">
+            <div className="form-group">
+              <label className="form-label">Vencimento</label>
+              <input type="date" className="form-input" value={form.dueDate} onChange={e => setForm({...form, dueDate:e.target.value})} />
+            </div>
+            <div className="form-group">
+              <label className="form-label">Status</label>
+              <select className="form-input" value={form.status} onChange={e => setForm({...form, status:e.target.value})}>
+                {DEBT_STATUS.map(s => <option key={s}>{s}</option>)}
+              </select>
+            </div>
+          </div>
+        </Modal>
+      )}
+    </div>
+  );
+}
+
+// ── SETTINGS ─────────────────────────────────────────────
+// ── SETTINGS ─────────────────────────────────────────────
+function Settings({ clients, appointments, works, debts, setClients, setAppointments, setWorks, setDebts, notify, exchangeRate, setExchangeRate }) {
+  const fileRef = useRef();
+  const [rateInput, setRateInput] = useState(String(exchangeRate));
+
+  function saveRate() {
+    const v = parseFloat(rateInput.replace(',','.'));
+    if (!v || v <= 0) return;
+    setExchangeRate(v);
+    saveData('exchangeRate', v);
+    notify('Taxa de câmbio atualizada');
+  }
+
+  function exportBackup() {
+    const data = { clients, appointments, works, debts, exportedAt: new Date().toISOString(), version: '2.0' };
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `agenda-espiritual-backup-${today()}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+    notify('Backup exportado com sucesso');
+  }
+
+  function importBackup(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = ev => {
+      try {
+        const data = JSON.parse(ev.target.result);
+        if (!data.clients && !data.appointments) { notify('Arquivo inválido'); return; }
+        if (!window.confirm(`Restaurar backup de ${data.exportedAt ? new Date(data.exportedAt).toLocaleString('pt-BR') : 'data desconhecida'}?\nIsso substituirá todos os dados atuais.`)) return;
+        if (data.clients) { setClients(data.clients); saveData('clients', data.clients); }
+        if (data.appointments) { setAppointments(data.appointments); saveData('appointments', data.appointments); }
+        if (data.works) { setWorks(data.works); saveData('works', data.works); }
+        if (data.debts) { setDebts(data.debts); saveData('debts', data.debts); }
+        notify('Backup restaurado com sucesso ✦');
+      } catch { notify('Erro ao ler o arquivo'); }
+    };
+    reader.readAsText(file);
+    e.target.value = '';
+  }
+
+  const stats = [
+    { label: 'Clientes', value: clients.length },
+    { label: 'Atendimentos', value: appointments.length },
+    { label: 'Trabalhos', value: works.length },
+    { label: 'Dívidas', value: debts.length },
+  ];
+
+  return (
+    <div>
+      <div className="page-header">
+        <h2>Configurações</h2>
+        <p>Backup e informações do sistema</p>
+      </div>
+
+      <div className="table-container" style={{marginBottom:20}}>
+        <div className="table-header"><span className="table-title">Taxa de Câmbio</span></div>
+        <div style={{padding:'20px 24px'}}>
+          <div className="settings-row">
+            <div className="settings-row-info">
+              <h4>1 € equivale a quantos R$?</h4>
+              <p>Usado para converter R$ em € no Faturamento mensal</p>
+            </div>
+            <div style={{display:'flex',gap:8,alignItems:'center'}}>
+              <span style={{fontFamily:'DM Mono,monospace',fontSize:13,color:'var(--text-muted)'}}>1 € =</span>
+              <input
+                className="form-input"
+                style={{width:100,textAlign:'right'}}
+                value={rateInput}
+                onChange={e => setRateInput(e.target.value)}
+                placeholder="6.20"
+              />
+              <span style={{fontFamily:'DM Mono,monospace',fontSize:13,color:'var(--text-muted)'}}>R$</span>
+              <button className="btn btn-primary btn-sm" onClick={saveRate}>Salvar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="table-container" style={{marginBottom:20}}>
+        <div className="table-header"><span className="table-title">Dados do Sistema</span></div>
+        <div style={{padding:'20px 24px', display:'grid', gridTemplateColumns:'repeat(4,1fr)', gap:16}}>
+          {stats.map(s => (
+            <div key={s.label}>
+              <div className="stat-mini-label">{s.label}</div>
+              <div className="stat-mini-value">{s.value}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="table-container">
+        <div className="table-header"><span className="table-title">Backup e Restauração</span></div>
+        <div style={{padding:'24px'}}>
+          <div className="settings-section">
+            <div className="settings-row">
+              <div className="settings-row-info">
+                <h4>Exportar Backup</h4>
+                <p>Salva todos os dados em um arquivo JSON que pode ser restaurado depois</p>
+              </div>
+              <button className="btn btn-primary" onClick={exportBackup}>⬇ Exportar JSON</button>
+            </div>
+            <div className="settings-row">
+              <div className="settings-row-info">
+                <h4>Restaurar Backup</h4>
+                <p>Atenção: substitui todos os dados atuais pelo arquivo selecionado</p>
+              </div>
+              <button className="btn btn-ghost" onClick={() => fileRef.current.click()}>⬆ Importar JSON</button>
+            </div>
+            <input ref={fileRef} type="file" accept=".json" style={{display:'none'}} onChange={importBackup} />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ── SORT HOOK ────────────────────────────────────────────
+function useSortable(items, defaultField, defaultDir = 'asc') {
+  const [sortField, setSortField] = useState(defaultField);
+  const [sortDir, setSortDir] = useState(defaultDir);
+
+  function toggleSort(field) {
+    if (sortField === field) setSortDir(d => d === 'asc' ? 'desc' : 'asc');
+    else { setSortField(field); setSortDir('asc'); }
+  }
+
+  const sorted = [...items].sort((a, b) => {
+    let va = a[sortField] ?? '';
+    let vb = b[sortField] ?? '';
+    if (typeof va === 'string') va = va.toLowerCase();
+    if (typeof vb === 'string') vb = vb.toLowerCase();
+    if (va < vb) return sortDir === 'asc' ? -1 : 1;
+    if (va > vb) return sortDir === 'asc' ? 1 : -1;
+    return 0;
+  });
+
+  function thProps(field) {
+    return {
+      className: `sortable${sortField === field ? ` ${sortDir}` : ''}`,
+      onClick: () => toggleSort(field),
+    };
+  }
+
+  // sortKey changes whenever the sort order changes, used by usePagination to reset page
+  const sortKey = `${sortField}:${sortDir}`;
+
+  return { sorted, thProps, sortField, sortDir, sortKey };
+}
+
+// ── GLOBAL SEARCH ────────────────────────────────────────
+
+function ClientSearchSelect({ clients, value, onChange, clientName }) {
+  const [query, setQuery] = React.useState('');
+  const [open, setOpen] = React.useState(false);
+  const ref = React.useRef(null);
+
+  const sorted = [...clients].filter(c => !c.inactive).sort((a, b) =>
+    clientName(a).localeCompare(clientName(b), 'pt', { sensitivity: 'base' })
+  );
+
+  const filtered = query.trim().length > 0
+    ? sorted.filter(c => clientName(c).toLowerCase().includes(query.toLowerCase()))
+    : sorted;
+
+  const selected = clients.find(c => c.id === value);
+
+  React.useEffect(() => {
+    function handleClick(e) {
+      if (ref.current && !ref.current.contains(e.target)) setOpen(false);
+    }
+    document.addEventListener('mousedown', handleClick);
+    return () => document.removeEventListener('mousedown', handleClick);
+  }, []);
+
+  function select(id) {
+    onChange(id);
+    setQuery('');
+    setOpen(false);
+  }
+
+  return (
+    <div ref={ref} style={{position:'relative'}}>
+      <div
+        className="form-input"
+        style={{cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'space-between',userSelect:'none'}}
+        onClick={() => { setOpen(o => !o); setTimeout(() => { if (ref.current) { const inp = ref.current.querySelector('input'); if (inp) inp.focus(); }}, 50); }}
+      >
+        <span style={{color: selected ? 'var(--text)' : 'var(--text-dim)'}}>
+          {selected ? clientName(selected) : '— Selecionar cliente cadastrado —'}
+        </span>
+        <span style={{fontSize:10,color:'var(--text-dim)'}}>▼</span>
+      </div>
+      {open && (
+        <div style={{position:'absolute',top:'calc(100% + 4px)',left:0,right:0,background:'var(--surface2)',border:'1px solid var(--border-hover)',zIndex:999,maxHeight:280,display:'flex',flexDirection:'column',boxShadow:'0 8px 24px rgba(0,0,0,0.4)'}}>
+          <input
+            className="form-input"
+            style={{borderBottom:'1px solid var(--border)',borderRadius:0,flexShrink:0}}
+            value={query}
+            onChange={e => setQuery(e.target.value)}
+            placeholder="Buscar cliente..."
+            autoFocus
+          />
+          <div style={{overflowY:'auto',flex:1}}>
+            <div
+              style={{padding:'10px 14px',cursor:'pointer',fontSize:14,color:'var(--text-dim)',fontStyle:'italic'}}
+              onMouseDown={() => select('')}
+            >— Nenhum —</div>
+            {filtered.length === 0 && (
+              <div style={{padding:'10px 14px',fontSize:14,color:'var(--text-dim)',fontStyle:'italic'}}>Nenhum resultado</div>
+            )}
+            {filtered.map(c => (
+              <div
+                key={c.id}
+                style={{padding:'10px 14px',cursor:'pointer',fontSize:15,background: c.id === value ? 'rgba(155,111,212,0.15)' : 'transparent',color: c.id === value ? 'var(--purple-light)' : 'var(--text)'}}
+                onMouseDown={() => select(c.id)}
+                onMouseEnter={e => e.currentTarget.style.background='rgba(155,111,212,0.08)'}
+                onMouseLeave={e => e.currentTarget.style.background= c.id === value ? 'rgba(155,111,212,0.15)' : 'transparent'}
+              >{clientName(c)}</div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function GlobalSearch({ clients, appointments, works, onNavigate, currentPage }) {
+  const [query, setQuery] = useState('');
+  const [open, setOpen] = useState(false);
+  const ref = useRef();
+  // Clear search when page changes externally (e.g. sidebar nav click)
+  useEffect(() => { setQuery(''); setOpen(false); }, [currentPage]);
+
+  useEffect(() => {
+    function handler(e) {
+      if (ref.current && !ref.current.contains(e.target)) setOpen(false);
+    }
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, []);
+
+  const q = query.toLowerCase().trim();
+
+  const matchClients = q.length < 2 ? [] : clients.filter(c =>
+    (c.name.toLowerCase().includes(q) || (c.nickname && c.nickname.toLowerCase().includes(q)) || (c.phone && c.phone.includes(q)))
+  ).slice(0, 4);
+
+  const matchApts = q.length < 2 ? [] : appointments.filter(a => {
+    const cl = clients.find(c => c.id === a.clientId);
+    const name = cl ? cl.name : a.clientName || '';
+    return name.toLowerCase().includes(q) || a.service.toLowerCase().includes(q) || (a.notes && a.notes.toLowerCase().includes(q));
+  }).slice(0, 4);
+
+  const matchWorks = q.length < 2 ? [] : works.filter(w => {
+    const cl = clients.find(c => c.id === w.clientId);
+    const name = cl ? cl.name : w.clientName || '';
+    return name.toLowerCase().includes(q) || (w.type && w.type.toLowerCase().includes(q));
+  }).slice(0, 3);
+
+  const hasResults = matchClients.length + matchApts.length + matchWorks.length > 0;
+
+  return (
+    <div className="topbar-search" ref={ref}>
+      <span className="topbar-search-icon">🔍</span>
+      <input
+        placeholder="Buscar clientes, atendimentos, trabalhos..."
+        value={query}
+        onChange={e => { setQuery(e.target.value); setOpen(true); }}
+        onFocus={() => setOpen(true)}
+      />
+      {open && q.length >= 2 && (
+        <div className="search-results">
+          {!hasResults && (
+            <div style={{padding:'20px',textAlign:'center',color:'var(--text-dim)',fontStyle:'italic',fontSize:15}}>Nenhum resultado encontrado</div>
+          )}
+          {matchClients.length > 0 && (
+            <div className="search-result-section">
+              <div className="search-result-label">✦ Clientes</div>
+              {matchClients.map(c => (
+                <div key={c.id} className="search-result-item" onClick={() => { onNavigate('clients'); setQuery(''); setOpen(false); }}>
+                  <div>
+                    <div className="search-result-item-main">{clientName(c)}</div>
+                    <div className="search-result-item-sub">{c.phone || c.country || '—'} {c.inactive ? '· inativo' : ''}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+          {matchApts.length > 0 && (
+            <div className="search-result-section">
+              <div className="search-result-label">◷ Atendimentos</div>
+              {matchApts.map(a => {
+                const cl = clients.find(c => c.id === a.clientId);
+                return (
+                  <div key={a.id} className="search-result-item" onClick={() => { onNavigate('appointments'); setQuery(''); setOpen(false); }}>
+                    <div>
+                      <div className="search-result-item-main">{cl ? clientName(cl) : a.clientName || '—'}</div>
+                      <div className="search-result-item-sub">{a.service} · {formatDate(a.date)} · <span className={badgeClass(a.status)}>{a.status}</span></div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+          {matchWorks.length > 0 && (
+            <div className="search-result-section">
+              <div className="search-result-label">🕯 Trabalhos</div>
+              {matchWorks.map(w => {
+                const cl = clients.find(c => c.id === w.clientId);
+                return (
+                  <div key={w.id} className="search-result-item" onClick={() => { onNavigate('works'); setQuery(''); setOpen(false); }}>
+                    <div>
+                      <div className="search-result-item-main">{cl ? clientName(cl) : w.clientName || '—'}</div>
+                      <div className="search-result-item-sub">{w.type} · {formatDate(w.startDate)}</div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ── APP ──────────────────────────────────────────────────
+function App() {
+  const [currentUser, setCurrentUser] = useState(() => loadData('currentUser', null));
+  const [page, setPage] = useState('dashboard');
+  const [clients, setClients] = useState(() => loadData('clients', []));
+  const [appointments, setAppointments] = useState(() => loadData('appointments', []));
+  const [works, setWorks] = useState(() => loadData('works', []));
+  const [debts, setDebts] = useState(() => loadData('debts', []));
+  const [exchangeRate, setExchangeRate] = useState(() => loadData('exchangeRate', 6.20));
+  const [notification, setNotification] = useState(null);
+
+
+
+  function notify(msg) {
+    setNotification(msg);
+    setTimeout(() => setNotification(null), 3100);
+  }
+
+  function handleLogin(user) {
+    setCurrentUser(user);
+    saveData('currentUser', user);
+  }
+
+  function handleLogout() {
+    setCurrentUser(null);
+    saveData('currentUser', null);
+    setPage('dashboard');
+  }
+
+  if (!currentUser) return <Login onLogin={handleLogin} />;
+
+  const NAV = [
+    { id: 'dashboard',    icon: '◈',  label: 'Visão Geral' },
+    { id: 'appointments', icon: '◷',  label: 'Agendamentos' },
+    { id: 'clients',      icon: '✦',  label: 'Clientes' },
+    { id: 'works',        icon: '🕯', label: 'Trabalhos' },
+    { id: 'finance',      icon: '◆',  label: 'Faturamento' },
+    { id: 'debts',        icon: '◉',  label: 'Dívidas' },
+    { id: 'settings',     icon: '⚙',  label: 'Configurações' },
+  ];
+
+  return (
+    <div className="app">
+      <aside className="sidebar">
+        <div className="sidebar-logo">
+          <h1>Agenda<br/>Espiritual</h1>
+          <p>Vivi de Mulambo</p>
+        </div>
+        <div className="sidebar-user">
+          <div className="sidebar-user-dot"/>
+          <span className="sidebar-user-name">{currentUser}</span>
+          <button className="sidebar-user-logout" onClick={handleLogout}>Sair</button>
+        </div>
+        <nav className="sidebar-nav">
+          {NAV.map(n => (
+            <div key={n.id} className={`nav-item${page===n.id?' active':''}`} onClick={() => setPage(n.id)}>
+              <span className="nav-icon">{n.icon}</span>
+              {n.label}
+            </div>
+          ))}
+        </nav>
+        <div className="sidebar-stats">
+          <div className="stat-mini">
+            <div className="stat-mini-label">Total Clientes</div>
+            <div className="stat-mini-value">{clients.length}</div>
+          </div>
+          <div className="stat-mini">
+            <div className="stat-mini-label">Atendimentos</div>
+            <div className="stat-mini-value">{appointments.length}</div>
+          </div>
+        </div>
+      </aside>
+
+      <main className="main main-with-topbar">
+        <div className="topbar">
+          <GlobalSearch clients={clients} appointments={appointments} works={works} onNavigate={setPage} currentPage={page} />
+
+        </div>
+        {page === 'dashboard'    && <Dashboard clients={clients} appointments={appointments} works={works} debts={debts} currentUser={currentUser} onNavigate={setPage} />}
+        {page === 'appointments' && <Appointments clients={clients} appointments={appointments} setAppointments={setAppointments} debts={debts} setDebts={setDebts} notify={notify} currentUser={currentUser} />}
+        {page === 'clients'      && <Clients clients={clients} setClients={setClients} appointments={appointments} works={works} debts={debts} notify={notify} currentUser={currentUser} />}
+        {page === 'works'        && <Works clients={clients} works={works} setWorks={setWorks} debts={debts} setDebts={setDebts} notify={notify} currentUser={currentUser} />}
+        {page === 'finance'      && <Finance appointments={appointments} works={works} debts={debts} exchangeRate={exchangeRate} />}
+        {page === 'debts'        && <Debts clients={clients} debts={debts} setDebts={setDebts} notify={notify} />}
+        {page === 'settings'     && <Settings clients={clients} appointments={appointments} works={works} debts={debts} setClients={setClients} setAppointments={setAppointments} setWorks={setWorks} setDebts={setDebts} notify={notify} exchangeRate={exchangeRate} setExchangeRate={setExchangeRate} />}
+      </main>
+
+      {notification && <Notification msg={notification} onClose={() => setNotification(null)} />}
+    </div>
+  );
+}
+
+ReactDOM.render(<App />, document.getElementById('app'));
+</script>
+</body>
+</html>
